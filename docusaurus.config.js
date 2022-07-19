@@ -3,7 +3,7 @@ module.exports = {
   title: 'SMA Technologies Help',
   tagline: 'DNA Connector',
   url: 'https://help.smatechnologies.com',
-  baseUrl: '/opcon/connectors/dna-connector/',
+  baseUrl: '/opcon/connectors/fiserv-dna/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
