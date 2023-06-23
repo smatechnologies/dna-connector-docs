@@ -18,7 +18,7 @@ To confirm that the sub-type is available for the end-user:
 1.  Launch Enterprise Manager
 2.  Create a new job with Windows for the Type
 3.	Confirm that “Fiserv DNA” is in the job sub-type dropdown.
-    ![img alt](../static/img/dna-subtype.png)
+    ![img alt](../../static/img/dna-subtype.png)
 
 :::info NOTE
 You may have to launch Enterprise Manager as Administrator the first time in order for the sub-type to show in the dropdown.
