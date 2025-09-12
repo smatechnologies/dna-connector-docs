@@ -136,7 +136,8 @@ DistributionJobFrequency=
     * This is the full path to a post-processing script or application. If the status from executing SQRT is zero (and this is defined), this script or application will be executed. The exit value from this execution will be used as the exit value for SMARunDNAJob.
 * AdditionalErrorCheckArgs
     * These are the arguments to pass to the application specified in the AdditionalErrorCheckPath.
-
+* Cluster
+    * If marked true, the DNA connector will poll the GV$Session table in Oracle as opposed to V$session. If you provide any value other than true, this will be made false. GV$Session is used by Oracle when there are multiple nodes involved, adding the node to help identify the current location of the process.  Oracle recommends utilizing GV$session when you have multiple nodes, and v$session if you only have one node.
 :::info NOTE
 † This configuration file parameter can be overridden from the command line.
 :::
