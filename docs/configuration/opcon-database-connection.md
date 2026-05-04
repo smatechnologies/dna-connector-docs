@@ -1,58 +1,86 @@
 ---
-sidebar_label: 'OpCon Configuration Changes'
+title: Configure the OpCon database connection
+sidebar_label: OpCon database connection
+description: "How to configure the OpCon database connection for the Fiserv DNA Connector by copying the SMAODBCConfiguration.dat file and updating the SMA Request Router."
+tags:
+  - Procedural
+  - System Administrator
+  - Configuration
 ---
 
-# Overview
+# Configure the OpCon database connection
 
-OpCon uses a single database to manage all data for the system. You must configure the connector to connect to that database. Then ensure that SMA Request Router knows what the compenent the data is for.
+## What is it?
 
-## OpCon Database Connection
+OpCon uses a single database to manage all scheduling data. The Fiserv DNA Connector must connect to that same database. This page covers three tasks:
 
-The following steps will walk you through copying the SMAODBCConfiguration.dat file into the DNA folder on the OpCon server.
+1. Copy the OpCon database connection file into the DNA folder.
+2. Add a DNA Query Processor entry to the SMA Request Router INI file.
+3. Insert the required database records for the DNA Query Processor.
 
-1. Navigate to ```<media>:\ProgramData\OpConxps\SAM\```
-2. Locate the ```SMAODBCCOnfiguration.dat``` file.
-3. Right-click on the file and choose Copy.
-4. Navigate to ```<media>:\ProgramData\OpConxps\DNA\```
+Complete all three tasks before moving to the next configuration step.
+
+## Step 1 — Copy the OpCon database connection file
+
+To copy the OpCon database connection file to the DNA folder, complete the following steps:
+
+1. Go to `<media>:\ProgramData\OpConxps\SAM\`.
+2. Locate `SMAODBCConfiguration.dat`.
+3. Copy the file.
+4. Go to `<media>:\ProgramData\OpConxps\DNA\`.
 5. Paste the file in this directory.
 
-## SMA Request Router Changes
+## Step 2 — Update the SMA Request Router INI
 
-For SMA Request Router to process the DNA requests correctly, it needs a new configuration in the INI for the SMADNAQueryProcessor.exe and the DNAQUERYPROCESSOR records must exist within the REQHANDLER and REQSOURCE tables.
+The SMA Request Router needs a new entry so it knows how to route DNA job requests to the DNA Query Processor (`SMADNAQueryProcessor.exe`).
 
-### Update the SMA Request Router INI
-1. Open Services on the OpCon server
-2. Stop the SMA Service Manager service.
-3. Navigate the the ```<media>:\ProgramData\OpConxps\SAM\```
-4. Open the SMARequestRouter.ini in a Notepad as an administrator.
-5. Add the following at the end of the file supplying the correct value for each parameter:
-```
-[RequestHandlerNN]
-RequestHandler=
-RequestExecutable=
-RequestExecutionPath=
-RequestArguments=
-```
+To update the SMA Request Router INI file, complete the following steps:
 
-| Setting | Dynamic | Description |
-| -------------- | --------------- | --------------- |
-| RequestHandler | No | The name of the Request Handler. For DNA it will be DNAQUERYPROCESSOR. |
-| RequestExecutable | No | The path and name of the SMASchedMan Request Handler executable. For DNA it will be the path to the SMADNAQueryProcessor.exe |
-| RequestExecutionPath | No | The working directory for the Request Handler. For DNA it will be the path the installation directory called DNA. |
-| RequestArguments | No | Defines the arguments in the Request Handler executable's command line. |
+1. Open **Services** on the OpCon server.
+2. Stop the **SMA Service Manager** service.
 
-### Update the OpCon Database
+   :::info NOTE
+   Stopping the service is required before editing the INI file to prevent the Request Router from reading a partially updated configuration.
+   :::
 
-1. Launch SQL Server Management Studio. 
-2. Log in with a user that has enough priviledges to make modifications to the OpConxps Database.
-3. Open a New Query and execute the following statement.
-```
-use opconxps
-DELETE FROM dbo.REQHANDLER WHERE REQHNDLR = 'DNAQUERYPROCESSOR'
-INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',0,1,'Fiserv DNA Query Processor Request Handler')
-INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',3,1,'1440')
-INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',5,1,'LIST')
-INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',5,2,'APPL')  
-DELETE FROM dbo.REQSOURCE WHERE REQSRCDESC = 'DNAQUERYPROCESSOR'
-INSERT INTO dbo.REQSOURCE (REQSRCDESC,RSFC,RSSEQNO,RSVALUE) VALUES ('DNAQUERYPROCESSOR',1,1,30)
-```
+3. Go to `<media>:\ProgramData\OpConxps\SAM\`.
+4. Open `SMARequestRouter.ini` in a text editor as an administrator.
+5. Add the following section at the end of the file:
+   ```
+   [RequestHandlerNN]
+   RequestHandler=
+   RequestExecutable=
+   RequestExecutionPath=
+   RequestArguments=
+   ```
+6. Replace each blank value using the descriptions below, then save the file.
+
+| Setting | Description |
+|---|---|
+| `RequestHandler` | The name of the request handler. Enter `DNAQUERYPROCESSOR`. |
+| `RequestExecutable` | The full path to `SMADNAQueryProcessor.exe`. |
+| `RequestExecutionPath` | The DNA installation directory (the working directory for the request handler). |
+| `RequestArguments` | Arguments for the request handler executable's command line. |
+
+## Step 3 — Update the OpCon database
+
+This step inserts the records that tell OpCon's database about the DNA Query Processor. The script removes any existing records first to avoid duplicates, then inserts fresh ones.
+
+To add the required records, complete the following steps:
+
+1. Open SQL Server Management Studio.
+2. Sign in with a user account that has permission to modify the OpConxps database.
+3. Open a new query window and run the following statement:
+
+   ```sql
+   use opconxps
+   DELETE FROM dbo.REQHANDLER WHERE REQHNDLR = 'DNAQUERYPROCESSOR'
+   INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',0,1,'Fiserv DNA Query Processor Request Handler')
+   INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',3,1,'1440')
+   INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',5,1,'LIST')
+   INSERT INTO dbo.REQHANDLER (REQHNDLR,RHFC,RHSEQNO,RHVALUE) VALUES ('DNAQUERYPROCESSOR',5,2,'APPL')
+   DELETE FROM dbo.REQSOURCE WHERE REQSRCDESC = 'DNAQUERYPROCESSOR'
+   INSERT INTO dbo.REQSOURCE (REQSRCDESC,RSFC,RSSEQNO,RSVALUE) VALUES ('DNAQUERYPROCESSOR',1,1,30)
+   ```
+
+When all three steps are complete, proceed to [Configure the Oracle connection](./sma-oracle-connection.md).

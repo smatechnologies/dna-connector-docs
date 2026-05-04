@@ -1,31 +1,32 @@
 ---
-sidebar_label: 'SMARunDNAJob Program'
+title: SMARunDNAJob configuration settings
+sidebar_label: SMARunDNAJob program
+description: "Complete reference for all settings in the SMARunDNAJob.ini configuration file, organized by section."
+tags:
+  - Reference
+  - System Administrator
+  - Configuration
 ---
 
-# SMARunJob Program
+# SMARunDNAJob configuration settings
 
-## Overview
+## What is it?
 
-The SMARunDNAJob.exe program starts and monitors a job that has been defined as a DNA job (SQT). If the job is initiated and finishes with no exceptions, the program exits with a value of 0. The SMARunDNAJob requires ODAC, Oracle client software and SQRWT. 
+`SMARunDNAJob.ini` is the primary configuration file for the SMARunDNAJob program. It controls how SMARunDNAJob connects to Oracle, monitors jobs, handles output files, and logs activity. Create this file in `C:\ProgramData\OpConxps\DNA\` before running DNA jobs.
 
-## Configure the ODAC
+Settings marked with **†** can be overridden by a matching command-line argument. See [Command-line options](../reference/command-line.md).
 
-*	ODAC (Oracle Data Access Components)
-	- Verify ODAC version matches client version.
-	- Set TEMP and TMP environment variables to ```C:\Temp```
-	- After ODAC files are downloaded
-		- Open command prompt
-		- Install by typing ```Install.bat all C:\Oracle myhome true```
-*	Oracle client software (administrator) “winx64_12201_client.zip”
+## Create the configuration file
 
-## SMARunDNAJob INI
+To create the SMARunDNAJob configuration file, complete the following steps:
 
-Create new file “SMARunDNAJob.ini” in the folder “C:\ProgramData\OpConxps\DNA\” with the following contents:
+1. Go to `C:\ProgramData\OpConxps\DNA\` (or the directory where `SMARunDNAJob.exe` is installed).
+2. Create a new file named `SMARunDNAJob.ini`.
+3. Enter the following template and populate the values for your environment:
 
-```
+```ini
 # ======================================================================
-# This file contains the system parameters to drive the 
-# SMARunDNAJob application.
+# SMARunDNAJob configuration file
 # ======================================================================
 
 [General]
@@ -71,7 +72,6 @@ DefaultParameterDateFormat=
 
 [DriveMappings]
 #Drive1=
-#Drive1=
 
 [Output File Handling]
 OutputReportDirectory=
@@ -86,136 +86,100 @@ DistributionJobJobName=
 DistributionJobFrequency=
 ```
 
-## SMARunDNAJob Configuration Settings
+## General
 
-### General	
-* DaysOfLogFilesToKeep
-   * This is used for automated log file clean-up. Log files that are older than this number of days will be purged.
-* Program2Execute	
-    * This is the full path of the SQRT program or the SQRWT program.
-* SQTArgumentTemplate
-    * This is a template to indicate argument placement for SQRT. The properties (enclosed in double brackets) will be replaced by either the value shown in the configuration file or found on the command line.
-* † EnvFile
-    * This file contains the environmental settings that should be used to build the desired environment for SQRT. The format should be environment variable=value. See Appendix B for an example Environment file.
-    * On a computer that can successfully run DNA job via sqrwt.exe in the command-line, generate the environment.txt file by entering the following into a command prompt: set environment.txt
-* † ErrorWordsFile	
-    * This is the full path to the file containing the directives that are evaluated against rows in the error table (queapplerror). The error words consist of Regular expressions separated by the vertical pipe. (Note that there must be an ending vertical pipe on each line of error words.) Regardless of the value of MSQUERRThreshold, any matches to an error word will cause the job to be considered failed, UNLESS the row first matches one of the [Ignore Masks]. Example error words file located in Appendix F. Name the file “SMAErrorWordsFile.txt”. The [Ignore Masks] section contains regular expressions that, if matched, causes the row to be discarded immediately. (It is not even included in the row count that is compared to MSQUERRThreshold.)
+The General settings control core program behavior — log retention, the SQRWT executable path, and references to supporting files.
 
-:::info NOTE
-† This configuration file parameter can be overridden from the command line.
-:::
+| Setting | Required | Description |
+|---|---|---|
+| `DaysOfLogFilesToKeep` | No | Number of days to retain log files. Log files older than this value are purged automatically. |
+| `Program2Execute` | Yes | Full path to the SQRWT program (`sqrwt.exe` or `sqrt.exe`). |
+| `SQTArgumentTemplate` | No | Template for building SQRWT arguments. Use double-bracket property tokens (for example, `[[SCHEDDATE]]`) for dynamic values. |
+| `EnvFile` **†** | No | Full path to the environment file that sets up the execution environment for SQRWT. See [Environment file](../reference/environment-file.md). |
+| `ErrorWordsFile` **†** | No | Full path to `SMAErrorWordsFile.txt`. Rows in the DNA error table matching these expressions cause the job to fail. See [SMAErrorWordsFile](../reference/sma-error-words-file.md). |
 
-### Oracle Parameters
-* OracleFile
-    * This is the path to the Oracle connection file generated with SMAOracleConnection utility. The file replaces the discontinued Oracle parameters below.
+## Oracle Parameters
 
-### Event Settings
-* PathToMsgInDirectory
-    * This is the directory that MSGIN events files should be dropped into. This can be a UNC designation if there is no Microsoft LSAM on the machine this application is installed on. 
-* OpConUser
-    * This is a valid OpCon/xps user id. This user must have the appropriate permissions to create the desired event.
-    
-* OpConPassword
-    * This is the password to the OpConUser specified above. Optionally, this can be the name of an encrypted password file. See SMACreatePasswordFile.
-* JobStartEvent
-    * If defined, this event is generated when the job starts. There are defined tokens that will be resolved for the event. These tokens are:
-        * [[SCHEDDATE]] 
-        * [[SCHEDNAME]]
-        * [[JOBNAME]]
-        * [[DNAQueueID]]
-        * [[DNAEffectiveDate]]
+The Oracle Parameters section points SMARunDNAJob to the Oracle connection file configured in the previous step.
 
-### Enhanced Monitoring	
-* † LostSessionTimeoutSeconds
-    * This value will be used by the Oracle database monitoring thread. If a status record cannot be found in the v$session table or if no status record indicating an active session can be found in this time limit, the session will be considered lost. 
-* † MachineName
-    * This is the name that is to be found in the v$session table. If this value is left unset, the environmental value for COMPUTERNAME will be used. The machine name must match entry in the v$session table exactly (TERMINAL field).
-* † FailInactiveStatus
-    * This is a true or false setting that dictates how to handle a session status of “INACTIVE”. If this flag is set to true, the status record is treated as failed.
-* AdditionalErrorCheckPath	
-    * This is the full path to a post-processing script or application. If the status from executing SQRT is zero (and this is defined), this script or application will be executed. The exit value from this execution will be used as the exit value for SMARunDNAJob.
-* AdditionalErrorCheckArgs
-    * These are the arguments to pass to the application specified in the AdditionalErrorCheckPath.
-* Cluster
-    * If marked true, the DNA connector will poll the GV$Session table in Oracle as opposed to V$session. If you provide any value other than true, this will be made false. GV$Session is used by Oracle when there are multiple nodes involved, adding the node to help identify the current location of the process.  Oracle recommends utilizing GV$session when you have multiple nodes, and v$session if you only have one node.
-:::info NOTE
-† This configuration file parameter can be overridden from the command line.
-:::
+| Setting | Required | Description |
+|---|---|---|
+| `OracleFile` | Yes | Full path to `SMAOracleConnection.ini`. This file replaces the legacy inline Oracle connection parameters. |
 
-### SQRT Parameters	
-* † SQTBaseDirectory	
-    * If this directory is defined, it will be used as the directory to the SQT. (This means that SQTPath should only be the name of the SQT.)
-* SQTBaseDirectoryAlternate1...SQTBaseDirectoryAlternate99
-    * If the SQT file cannot be found in SQTBaseDirectory, these alternate directories will be searched until the first SQT file that matches the desired name is found.
-* † SQTUser
-    * This is the Oracle user to use to execute the SQT. It can be the same as the Oracle user.
-* † SQTPassword
-    * This is the password of the user to use to execute the SQT or the name of an encrypted file containing the password.
-* † SQTDatabase
-    * Then this is the Service Name for this Oracle database.
-* † SQTOverrideDatabase
-    * One client ended up requiring a database connection (SQTDatabase) to monitor the process, but the sqrwt.exe command-line would fail with the SQTDatabase value. In response, the SQTOverrideDatabase value can be used to override the SQTDatabase value on the sqrwt.exe command-line.
-* † SQTOptions
-    * Miscellaneous options that are desired can be specified by this option.
-* † SQTErrorFile
-    * This is the file to put SQRT error messages in. If this is set to the literal “GENERATE” (without the quote marks), SMARunDNAJob will create a file name based on the OpCon job name.
-* † SQTReportPath
-    * This is the output directory path that is passed to SQRWT.
-* † SQTResponseFilePath
-    * This is the output directory to write the temporary response file to.
+## Event Settings
 
-:::info NOTE
-† This configuration file parameter can be overridden from the command line.
-:::
+The Event Settings control OpCon events that SMARunDNAJob can fire when a job starts.
 
-### Processing Options	
-* † networknodenbr
-    * The network node number can be defined in the environment file, or the configuration file (by this setting). This configuration file value would override any value in the environment file. If there is a command line argument, it would override this setting. If the network node value is not defined in any of these places, the most recently created entry that is still active in the NTWKNODE table will be used.
-* † ListErrorDetail
-    * Any errors logged to the QUEAPPLERROR table will be displayed when this is true. The text of the error message(s) can be suppressed by setting this to false. This might be desired in cases where sensitive data is included in the error message.
-* † MSQUERRThreshold
-    * Typically, any errors in the error table will set the indicator that the job has failed. Sometimes, there need to be allowances made for messages that are not really errors. If this value is non-zero, the error indicator will only be set if the line count in the error table exceeds MSQUERRThreshold.
-* † OrganizationNumber
-    * This value is to identify which organization to use for lookups in the BANKORGYEARMONTHDAY table.
-* † DefaultParameterDateFormat
-    * When doing date offsets, SMARunDNAJob needs to know the format expected by the application for the computed date. This format will be used as the default. The default can be over-ridden when the parameter is specified on the command line. (See “Appendix C – Date Format Specifications”.)
+| Setting | Required | Description |
+|---|---|---|
+| `PathToMsgInDirectory` | No | Directory where OpCon MSGIN event files are placed. Use a UNC path if there is no Windows Agent installed on the machine running SMARunDNAJob. |
+| `OpConUser` | No | A valid OpCon user ID with permissions to create events. Required if `JobStartEvent` is set. |
+| `OpConPassword` | No | Password for the `OpConUser`. Can be the name of an encrypted password file created with SMACreatePasswordFile. |
+| `JobStartEvent` | No | An OpCon event generated when the job starts. Supported tokens: `[[SCHEDDATE]]`, `[[SCHEDNAME]]`, `[[JOBNAME]]`, `[[DNAQueueID]]`, `[[DNAEffectiveDate]]`. |
 
-:::info NOTE
-† This configuration file parameter can be overridden from the command line.
-:::
+## Enhanced Monitoring
 
-### DriveMappings	
-* Drive1…Drive999
-    * This statement consists of four fields (separated by the pipe symbol). This fields are:
-        * Local Drive (such as Z:)
-        * Share name
-        * User name (credentials to use for mapping)
-        * User encrypted password
+The Enhanced Monitoring settings control how SMARunDNAJob tracks the Oracle session for a running job and determines whether the job has stalled or failed.
 
-### Output File Handling	
-* OutputReportDirectory
-    * If CopyReportToOutput is set to true, the output file will be copied to 'OutputReportDirectory\effective date\queue number'.
-* † CopyReportToOutput
-    * If this is set to true, the output file will be copied to OutputReportDirectory\effective date\queue number. The valid values are true and false.
-* OpticalReportDirectory
-    * If CopyReportToOptical is set to true, the output file will be copied to OpticalReportDirectory/
-* PartnerReportDirectory
-    * If CopyReportToPartner is set to true, the output file will be copied to PartnerReportDirectory\effective date\queue number.
-    * If there are multiple directory destinations, separate the entries with a semi*colon.
-* † CopyReportToOptical
-    * If this is set to true, the output file will be copied to OpticalReportDirectory. The valid values are true and false.
-* † CopyReportToPartner
-    * If this is set to true, the output file will be copied to ParentReportDirectory\effective date\queue number. The valid values are true and false.
-* DistributionTicketDirectory
-    * If CopyReportToOutput is true and either CopyReportToOptical or CopyReportToPartner is true, then a Distribution Ticket file will be created in this directory for SMADistributeFiles.
-* DistributionJobScheduleName
-    * If CopyReportToOutput is true and either CopyReportToOptical or CopyReportToPartner is true, then a $JOB:ADD event will be generated for a job with this schedule name.
-* DistributionJobJobName
-    * If CopyReportToOutput is true and either CopyReportToOptical or CopyReportToPartner is true, then a $JOB:ADD event will be generated for a job with this job name.
-* DistributionJobFrequency
-    * If CopyReportToOutput is true and either CopyReportToOptical or CopyReportToPartner is true, then a $JOB:ADD event will be generated for a job with this frequency.
+| Setting | Required | Description |
+|---|---|---|
+| `LostSessionTimeoutSeconds` **†** | No | Timeout (in seconds) for the Oracle session monitoring thread. If no active session is found within this time, the session is considered lost and the job fails. |
+| `MachineName` **†** | No | The machine name to match in the Oracle `V$SESSION` table (`TERMINAL` field). If not set, SMARunDNAJob uses the `COMPUTERNAME` environment variable. |
+| `FailInactiveStatus` **†** | No | Set to `true` to treat an Oracle session status of `INACTIVE` as a failure. Set to `false` to allow inactive status. |
+| `AdditionalErrorCheck` | No | Full path to a post-processing script or application. If SQRWT exits with code `0`, SMARunDNAJob runs this script and uses its exit code as the final exit code. |
+| `AdditionalErrorCheckArgs` | No | Arguments to pass to the application specified in `AdditionalErrorCheck`. |
+| `Cluster` | No | Set to `true` to poll `GV$SESSION` instead of `V$SESSION`. Use this setting when the Fiserv DNA Oracle environment uses multiple nodes (RAC). Any value other than `true` is treated as `false`. |
 
+## SQRT Parameters
 
-:::info NOTE
-† This configuration file parameter can be overridden from the command line.
-:::
+The SQRT Parameters settings control how SMARunDNAJob invokes the SQRWT program and where it looks for SQT files.
+
+| Setting | Required | Description |
+|---|---|---|
+| `SQTBaseDirectory` **†** | No | Base directory for SQT files. When set, the SQT path on the command line is treated as a file name only. |
+| `SQTBaseDirectoryAlternate1`…`SQTBaseDirectoryAlternate99` | No | Alternate directories searched if the SQT file is not found in `SQTBaseDirectory`. Directories are searched in order until a match is found. |
+| `SQTUser` **†** | No | Oracle user for running the SQT. |
+| `SQTPassword` **†** | No | Password for `SQTUser`, or the name of an encrypted password file. |
+| `SQTDatabase` **†** | No | Oracle service name for the database connection used to run the SQT. |
+| `SQTOverrideDatabase` **†** | No | Overrides `SQTDatabase` on the SQRWT command line only. Use when the database value required for monitoring differs from the value required for the SQRWT command line. |
+| `SQTOptions` **†** | No | Miscellaneous options to pass to SQRWT. |
+| `SQTErrorFile` **†** | No | File path for SQRWT error messages. Set to `GENERATE` (without quotes) to have SMARunDNAJob create a file name based on the OpCon job name. |
+| `SQTReportPath` **†** | No | Output directory path passed to SQRWT. |
+| `SQTResponseFilePath` **†** | No | Directory for the temporary response file written during job processing. |
+
+## Processing Options
+
+The Processing Options settings control job-level behavior including error reporting thresholds and date formatting.
+
+| Setting | Required | Description |
+|---|---|---|
+| `networknodenbr` **†** | No | Network node number. Can also be set in the environment file or on the command line. If not set in any location, the most recently created active entry in the `NTWKNODE` table is used. |
+| `ListErrorDetail` **†** | No | Set to `true` to display error messages from the `QUEAPPLERROR` table. Set to `false` to suppress error text (useful when error messages contain sensitive data). |
+| `MSQUERRThreshold` **†** | No | If set to a non-zero value, the job is marked failed only when the error row count in `QUEAPPLERROR` exceeds this threshold. |
+| `OrganizationNumber` **†** | No | Organization number used for lookups in the `BANKORGYEARMONTHDAY` table. |
+| `DefaultParameterDateFormat` **†** | No | Default date format used when computing date offsets for parameter values. Can be overridden per parameter on the command line. |
+
+## DriveMappings
+
+Use DriveMappings when SMARunDNAJob needs to connect to network shares as mapped drives. Define one mapping per numbered setting (Drive1, Drive2, and so on).
+
+| Setting | Required | Description |
+|---|---|---|
+| `Drive1`…`Drive999` | No | Drive mapping definition. Each value contains four fields separated by a pipe (`\|`): local drive letter, share name, user name, encrypted user password. For example: `Z:\|\\server\share\|domain\user\|encryptedpassword`. |
+
+## Output File Handling
+
+The Output File Handling settings control whether and where SMARunDNAJob copies the output file after a job completes. Enable each copy target individually (`CopyReportToOutput`, `CopyReportToOptical`, `CopyReportToPartner`), then set the corresponding destination path.
+
+| Setting | Required | Description |
+|---|---|---|
+| `OutputReportDirectory` | No | If `CopyReportToOutput` is `true`, the output file is copied to `OutputReportDirectory\<effective date>\<queue number>`. |
+| `CopyReportToOutput` **†** | No | Set to `true` to copy the output file to `OutputReportDirectory`. |
+| `OpticalReportDirectory` | No | If `CopyReportToOptical` is `true`, the output file is copied to this directory. |
+| `PartnerReportDirectory` | No | If `CopyReportToPartner` is `true`, the output file is copied to `PartnerReportDirectory\<effective date>\<queue number>`. Separate multiple destinations with a semicolon. |
+| `CopyReportToOptical` **†** | No | Set to `true` to copy the output file to `OpticalReportDirectory`. |
+| `CopyReportToPartner` **†** | No | Set to `true` to copy the output file to `PartnerReportDirectory\<effective date>\<queue number>`. |
+| `DistributionTicketDirectory` | No | Directory for Distribution Ticket files created when `CopyReportToOutput` is `true` and either `CopyReportToOptical` or `CopyReportToPartner` is also `true`. |
+| `DistributionJobScheduleName` | No | Schedule name for the `$JOB:ADD` event generated when distribution copying is active. |
+| `DistributionJobJobName` | No | Job name for the `$JOB:ADD` event generated when distribution copying is active. |
+| `DistributionJobFrequency` | No | Frequency for the `$JOB:ADD` event generated when distribution copying is active. |

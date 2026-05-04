@@ -1,34 +1,49 @@
 ---
-sidebar_label: 'SMA OpCon Fiserv DNA Subtype'
+title: Install the Fiserv DNA job sub-type
+sidebar_label: Fiserv DNA job sub-type
+description: "How to install the Fiserv DNA job sub-type plug-in in Enterprise Manager."
+tags:
+  - Procedural
+  - System Administrator
+  - Installation
 ---
 
-# SMA OpCon Fiserv DNA Subtype
+# Install the Fiserv DNA job sub-type
 
-After unzipping the Fiserv DNA Connector package perform the following steps to install the DNA Sub-type.
+## What is it?
 
-## Install the Sub-Type
+The Fiserv DNA job sub-type is a plug-in for Enterprise Manager that adds the DNA job definition form to OpCon's Windows job type. Install it on each machine where users define DNA jobs in Enterprise Manager.
 
-1.  Within emplugins folder, locate the jar file called: ```com.sma.ui.core.jobdetails.fiservdna_.jar```.
-2.  Copy the jar file from the DNA distribution directory, ```<media>:\SMADNAConnector\emplugins``` into ```<media>:\OpConxps\EnterpriseManager x64\dropins``` folder on each end-user's machine.
+## Prerequisites
 
-## Confirm the Sub-Type
+- The Fiserv DNA Connector package is extracted and available.
+- Enterprise Manager is installed on the target machine.
 
-To confirm that the sub-type is available for the end-user:
+## Install the sub-type
 
-1.  Launch Enterprise Manager
-2.  Create a new job with Windows for the Type
-3.	Confirm that “Fiserv DNA” is in the job sub-type dropdown.
-    ![img alt](../../static/img/dna-subtype.png)
+To install the Fiserv DNA job sub-type, complete the following steps:
+
+1. In the extracted connector package, open the `emplugins` folder.
+2. Locate the file `com.sma.ui.core.jobdetails.fiservdna_.jar`.
+3. Copy the JAR file from `<media>:\SMADNAConnector\emplugins\` to `<media>:\OpConxps\EnterpriseManager x64\dropins\` on each machine running Enterprise Manager.
+
+## Confirm the sub-type is available
+
+To confirm that the sub-type is available, complete the following steps:
+
+1. Open Enterprise Manager.
+2. Create a new job with **Windows** as the job type.
+3. Confirm that **Fiserv DNA** appears in the job sub-type list.
+
+![Fiserv DNA sub-type in job definition](../../static/img/dna-subtype.png)
 
 :::info NOTE
-You may have to launch Enterprise Manager as Administrator the first time in order for the sub-type to show in the dropdown.
+You may need to open Enterprise Manager as an administrator the first time for the sub-type to appear in the list.
 :::
 
 :::info NOTE
-For new implemntations, create a new Global Property with the path to SMARunDNAJob.exe as the value
+For new implementations, create a new Global Property with the path to `SMARunDNAJob.exe` as the value:
 
-Name: PathSMADNA
-
-Value: ```<media>:\SMADNAConnector\```
+- **Name**: `PathSMADNA`
+- **Value**: `<media>:\SMADNAConnector\`
 :::
-

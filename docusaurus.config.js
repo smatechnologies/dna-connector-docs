@@ -1,11 +1,15 @@
-/** @type {import('@docusaurus/types').DocusaurusConfig} */
-module.exports = {
+/** @type {import('@docusaurus/types').Config} */
+const config = {
   title: 'SMA Technologies Help',
   tagline: 'DNA Connector',
   url: 'https://help.smatechnologies.com',
   baseUrl: '/opcon/connectors/fiserv-dna/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
   favicon: 'img/favicon.ico',
   organizationName: 'smatechnologies',
   projectName: 'dna-connector-docs',
@@ -28,7 +32,7 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          breadcrumbs: false,
+          breadcrumbs: true,
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
@@ -45,9 +49,10 @@ module.exports = {
   ],
   plugins: [
     [
-      require.resolve('@cmfcmf/docusaurus-search-local'), 
-      {
-      }
+      '@cmfcmf/docusaurus-search-local',
+      {},
     ],
   ],
 };
+
+module.exports = config;
