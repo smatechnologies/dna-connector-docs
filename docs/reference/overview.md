@@ -5,7 +5,7 @@ description: "An overview of the reference material available for the Fiserv DNA
 tags:
   - Reference
   - All
-  - Reference
+  - DNA Connector
 ---
 
 # Reference overview

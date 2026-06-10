@@ -5,7 +5,7 @@ description: "Reference for the SMARunDNAJob environment file format, including 
 tags:
   - Reference
   - Developer
-  - Reference
+  - DNA Connector
 ---
 
 # Environment file

@@ -16,7 +16,24 @@ SMARunDNAJob is a command-line program that starts and monitors jobs on the Fise
 
 An enhanced monitoring option provides visibility into the job's status as it runs by tracking the active Oracle session associated with the DNA process.
 
-If the job completes without errors, SMARunDNAJob exits with code `0` and OpCon marks the job finished. If the job encounters errors, SMARunDNAJob exits with a non-zero code and OpCon marks the job failed.
+SMARunDNAJob exits with one of the following codes:
+
+| Exit code | Meaning |
+|---|---|
+| `0` | Job completed successfully. |
+| `1` | Job failed. Check the log file for details. |
+| `5001` | File-load job completed with `TBL` (partial load) status rather than full `LOAD` status. |
+
+## File-load jobs
+
+A file-load job is a special DNA job type that processes a file into the Fiserv DNA system. Use the `-FileLoad` command-line argument to run a job in file-load mode. SMARunDNAJob tracks five counters for the file-load operation — batch count, record count, credits, debits, and file number — and stores each in an OpCon property you specify on the command line.
+
+When the file-load job completes, DNA reports one of two statuses:
+
+- **LOAD** — The file was fully loaded. SMARunDNAJob exits with code `0`.
+- **TBL** — The file was partially loaded (table load only). SMARunDNAJob exits with code `5001`.
+
+See [Command-line options](../reference/command-line.md) for the `-FileLoad` and related arguments.
 
 ## How it works
 

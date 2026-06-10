@@ -25,8 +25,8 @@ The **Job Details** tab provides fields for the DNA job's core identifying infor
 - **APPL name** — The name of the Fiserv DNA application (APPL) to run.
 - **APPL number** — The numeric identifier for the Fiserv DNA application.
 - **Effective date** — The processing date for the DNA job, in `YYYY/MM/DD` format.
-
-Additional DNA-specific fields are available depending on the job type.
+- **Cycle codes** — One or more Fiserv DNA processing cycle identifiers for the job (for example, `EOM` for end-of-month). Cycle codes correspond to the `-C1` through `-C99` command-line arguments.
+- **Parameters** — DNA job parameters passed to the job at run time. Parameters correspond to the `-P1` through `-P99` command-line arguments and follow the format `PARAMETER_CODE|value`.
 
 ![DNA job definition - Job Details tab](../../static/img/dna-job-definition-1.png)
 
@@ -34,7 +34,7 @@ Additional DNA-specific fields are available depending on the job type.
 
 The **Job DNA Query** tab lets you query the Fiserv DNA database directly from within OpCon to look up job definitions and auto-populate the job detail fields.
 
-To use the query:
+To query the Fiserv DNA database, complete the following steps:
 
 1. Select a template or APPL from the list.
 2. Review the APPL details, including parameter codes, parameter code descriptions, data types, and default database values.

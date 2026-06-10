@@ -94,7 +94,7 @@ The General settings control core program behavior — log retention, the SQRWT 
 |---|---|---|
 | `DaysOfLogFilesToKeep` | No | Number of days to retain log files. Log files older than this value are purged automatically. |
 | `Program2Execute` | Yes | Full path to the SQRWT program (`sqrwt.exe` or `sqrt.exe`). |
-| `SQTArgumentTemplate` | No | Template for building SQRWT arguments. Use double-bracket property tokens (for example, `[[SCHEDDATE]]`) for dynamic values. |
+| `SQTArgumentTemplate` | No | Template for building the SQRWT command-line argument string. Supported tokens are replaced at run time: `[[SQTPath]]`, `[[SQTUser]]`, `[[SQTPassword]]`, `[[SQTDatabase]]`, `[[SQTOptions]]`, `[[SQTErrorFile]]`, `[[SQTResponseFile]]`. |
 | `EnvFile` **†** | No | Full path to the environment file that sets up the execution environment for SQRWT. See [Environment file](../reference/environment-file.md). |
 | `ErrorWordsFile` **†** | No | Full path to `SMAErrorWordsFile.txt`. Rows in the DNA error table matching these expressions cause the job to fail. See [SMAErrorWordsFile](../reference/sma-error-words-file.md). |
 
@@ -165,7 +165,7 @@ Use DriveMappings when SMARunDNAJob needs to connect to network shares as mapped
 
 | Setting | Required | Description |
 |---|---|---|
-| `Drive1`…`Drive999` | No | Drive mapping definition. Each value contains four fields separated by a pipe (`\|`): local drive letter, share name, user name, encrypted user password. For example: `Z:\|\\server\share\|domain\user\|encryptedpassword`. |
+| `Drive1`…`Drive99` | No | Drive mapping definition. Each value contains four fields separated by a pipe (`\|`): local drive letter, share name, user name, encrypted user password. For example: `Z:\|\\server\share\|domain\user\|encryptedpassword`. |
 
 ## Output File Handling
 

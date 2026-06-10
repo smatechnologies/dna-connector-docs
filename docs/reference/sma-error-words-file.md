@@ -5,7 +5,7 @@ description: "Reference for the SMAErrorWordsFile.txt format used by SMARunDNAJo
 tags:
   - Reference
   - Developer
-  - Reference
+  - DNA Connector
 ---
 
 # SMAErrorWordsFile

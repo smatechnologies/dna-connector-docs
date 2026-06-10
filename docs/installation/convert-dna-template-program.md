@@ -17,12 +17,13 @@ The Convert DNA Template program (`SMAConvertDNATemplate.exe`) imports existing 
 ## Prerequisites
 
 - The machine has network access to the Fiserv DNA Oracle database.
+- .NET Framework 4.7 is installed on the machine.
 - The DDI (Data Definition Interface) service is running on the OpCon server and its hot folder path is known.
 
 ## Install the Convert DNA Template program
 
 To install the Convert DNA Template program, complete the following steps:
 
-1. Copy `SMAConvertDNATemplate.exe` and its supporting files to the directory where the program will run and connect to the Fiserv database. For example: `C:\SMADNA`.
+1. Copy `SMAConvertDNATemplate.exe` and its supporting files to the directory where the program will run and connect to the Fiserv DNA Oracle database. For example: `C:\SMADNA`.
 
 After installation, proceed to [Convert DNA Template usage](../convert-dna-template.md) to configure and run the program.

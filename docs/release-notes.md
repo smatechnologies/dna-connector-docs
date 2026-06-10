@@ -10,6 +10,10 @@ tags:
 
 # DNA Connector release notes
 
+## What is it?
+
+This page documents version history for the Fiserv DNA Connector, including new features, improvements, and bug fixes by release.
+
 ## 26
 
 ### 26.0.0
