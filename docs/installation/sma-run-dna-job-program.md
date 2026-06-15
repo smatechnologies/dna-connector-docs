@@ -19,6 +19,7 @@ SMARunDNAJob is the program that starts and monitors Fiserv DNA jobs. Install it
 - SQRWT (`sqrwt.exe`) is installed and accessible on the target machine.
 - ODAC (Oracle Data Access Components) is installed on the target machine.
 - Oracle client software (administrator edition) is installed on the target machine.
+- .NET 5.0 runtime (Windows x64) is installed on the target machine.
 
 ## Install SMARunDNAJob
 

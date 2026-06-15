@@ -20,7 +20,7 @@ OpCon uses a single database to manage all scheduling data. The Fiserv DNA Conne
 
 Complete all three tasks before moving to the next configuration step.
 
-## Step 1 — Copy the OpCon database connection file
+## Copy the OpCon database connection file
 
 To copy the OpCon database connection file to the DNA folder, complete the following steps:
 
@@ -30,7 +30,7 @@ To copy the OpCon database connection file to the DNA folder, complete the follo
 4. Go to `<media>:\ProgramData\OpConxps\DNA\`.
 5. Paste the file in this directory.
 
-## Step 2 — Update the SMA Request Router INI
+## Update the SMA Request Router INI
 
 The SMA Request Router needs a new entry so it knows how to route DNA job requests to the DNA Query Processor (`SMADNAQueryProcessor.exe`).
 
@@ -62,7 +62,9 @@ To update the SMA Request Router INI file, complete the following steps:
 | `RequestExecutionPath` | The DNA installation directory (the working directory for the request handler). |
 | `RequestArguments` | Arguments for the request handler executable's command line. |
 
-## Step 3 — Update the OpCon database
+7. Return to **Services** and start the **SMA Service Manager** service.
+
+## Update the OpCon database
 
 This step inserts the records that tell OpCon's database about the DNA Query Processor. The script removes any existing records first to avoid duplicates, then inserts fresh ones.
 

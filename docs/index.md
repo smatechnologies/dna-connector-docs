@@ -1,8 +1,14 @@
 ---
 slug: '/'
+title: Fiserv DNA Connector
 sidebar_label: 'DNA Connector'
+description: "Documentation for the Fiserv DNA Connector for OpCon — installation, configuration, and reference for all components."
 hide_table_of_contents: true
 displayed_sidebar: null
+tags:
+  - Conceptual
+  - All
+  - DNA Connector
 ---
 
 # Fiserv DNA Connector

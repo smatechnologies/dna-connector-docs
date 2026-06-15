@@ -5,7 +5,7 @@ description: "Complete reference for all command-line arguments accepted by SMAR
 tags:
   - Reference
   - Developer
-  - Reference
+  - DNA Connector
 ---
 
 # SMARunDNAJob command-line options
@@ -23,7 +23,7 @@ SMARunDNAJob accepts command-line arguments that override or supplement the sett
 | `-ApplNumber` | Either `-ApplName` or `-ApplNumber` | APPL number. When specified, SMARunDNAJob uses this number directly instead of performing a database lookup. Some APPLs have multiple APPL numbers; specifying the number on the command line ensures the correct one is used. |
 | `-CreateFolderWithEDandQN` | No | Path to which the effective date and queue number are appended. SMARunDNAJob creates the resulting directory structure. The root directory must already exist. |
 | `-CycleCodeNotRequired` | No | Allows a job with defined cycle codes in the database to run without any cycle codes specified on the command line. No value is required — specify `-CycleCodeNotRequired` alone. Has no effect if the job has no cycle codes. |
-| `-EffectiveDate` | No | Effective date for the DNA job. Must be in `YYYY/MM/DD` format. If not specified, the value is retrieved from the `BANKOPTION` table. |
+| `-EffectiveDate` | No | Effective date for the DNA job. Must be in `YYYY/MM/DD` format. If not specified, SMARunDNAJob retrieves the effective date from the `PDAT` field in the `BANKOPTION` table. |
 | `-EffectiveDateOffset` | No | A positive or negative integer added to the effective date. |
 | `-FileLoad` | No | Indicates a FileLoad job. Format: `-FileLoad="filename"`. When specified, you must also supply the FileLoad arguments listed below. |
 | `-FLBatchCount` | Required with `-FileLoad` | Name of the OpCon property to store the batch count from the file load. |
@@ -38,6 +38,26 @@ SMARunDNAJob accepts command-line arguments that override or supplement the sett
 | `-Property4QueueID` | No | Name of the OpCon property in which to save the queue ID for later reference. |
 | `-PVSeparator` | No | Alternate separator character to use in parameter specifications instead of the vertical pipe (`\|`). |
 | `-UseBusinessDate` | No | Instructs SMARunDNAJob to look up the business date in the `BANKORGYEARMONTHDAY` table using the effective date. Requires `-EffectiveDate`. If `-EffectiveDateOffset` is also set, the offset is applied in business days. |
+
+## Exit codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Job completed successfully. |
+| `1` | Job failed. Check the SMARunDNAJob log file for details. |
+| `5001` | File-load job completed with `TBL` (partial load) status. The file was processed but did not reach full `LOAD` status. Review the DNA job output to determine whether the partial load is acceptable. |
+
+## Test and debug options
+
+These options are intended for testing and troubleshooting only. Do not use them in production job definitions.
+
+| Option | Required | Description |
+|---|---|---|
+| `-TestMode` | No | Skips actual SQRWT execution. |
+| `-TestApplNumber` | No | Generates a synthetic APPL number from the current timestamp instead of performing a database lookup. |
+| `-TestQueueNumber` | No | Generates a synthetic queue number from the current timestamp instead of retrieving one from the DNA database. |
+| `-TestSimulateOracleMonitor` | No | Instructs the Oracle session monitor to always report the job as running. Useful for testing monitoring logic without an active Oracle session. |
+| `-Debug` | No | Enables verbose debug output. |
 
 ## Parameter format
 
