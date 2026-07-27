@@ -1,102 +1,252 @@
-# OpCon API Reference Template
+# API Reference Documentation
 
-The DNA Connector documentation does not expose a public REST API; however, this template applies to any command-line interface (CLI) or programmatic interface documentation in this repository.
+Strict output format and rules for per-endpoint API reference files. Every endpoint gets one markdown file. No freeform prose.
 
----
+## File Naming
 
-## CLI Reference Template
+| Pattern | File Name | Example |
+| --- | --- | --- |
+| List (paginated) | `all-{resources}.md` | `all-jobs.md` |
+| Get by ID | `get-{resource}.md` | `get-job.md` |
+| POST create | `create-{action}.md` | `create-schedule.md` |
+| POST action | `{verb}-{resource}.md` | `build-schedule.md`, `cancel-job.md` |
 
-Use this template for command-line program reference pages (e.g., SMARunDNAJob command-line options).
+- All endpoint files go in `docs/api/reference/` (flat — no subdirectories)
+- List/get files use the resource noun from the route
+- POST files use a descriptive verb-noun pair
 
-```markdown
----
-title: <Program name> command-line options
-description: "Complete reference for all command-line arguments accepted by <program name>."
-tags:
-  - Reference
-  - <Role>
-  - <Feature>
----
+## Source Material
 
-# <Program name> command-line options
+Derive all documentation from source code — never guess.
 
-## What is it?
+- **API controllers:** Search `src/` for `*ApiController*.cs`, especially `Controllers/Api/` folders
+- **DTOs:** Search for `*Dto.cs`, `*ListDto.cs`, `*DetailDto.cs`
+- **Request DTOs:** Search for `*Request.cs` (e.g., `BuildScheduleRequest.cs`, `CancelJobRequest.cs`)
+- **Pagination:** Search for `PaginationParams` and `PaginatedResult`
+- **Serialization:** Search for serializer or response-shaping classes to understand response shapes
+- **Auth:** Search for token authentication middleware to understand auth requirements
+- **Base controller:** Find response helpers and understand the standard response envelope shape
 
-<One paragraph: what the program does, when you use command-line arguments, and the general syntax.>
+## Templates
 
-## Syntax
+### GET — List (Paginated)
 
+````markdown
+# All {Resources}
+
+**Endpoint:** `GET /api/{resources}`
+
+**Description:** One sentence describing what this endpoint returns.
+
+## Query Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `page` | integer | No | Page number (1-based). Default: `1`. |
+| `pageSize` | integer | No | Results per page. Default: `50`. |
+
+> Include all supported filter parameters (e.g., `status`, `scheduleId`) with their allowed values in the Description column.
+
+## Response Attributes
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | array[object] | The result set for the current page. |
+| `items[].id` | string (GUID) | Use `[]` notation for array items. |
+| `items[].nested.child` | string | Use dot notation for nested fields. |
+| `totalCount` | integer | Total matching results across all pages. |
+| `page` | integer | Current page number. |
+| `pageSize` | integer | Number of results per page. |
+| `totalPages` | integer | Total number of pages. |
+
+## Sample Response
+
+```json
+{
+  "items": [{ one complete item with all fields }],
+  "totalCount": 142,
+  "page": 1,
+  "pageSize": 50,
+  "totalPages": 3
+}
 ```
-<ProgramName>.exe [options]
+````
+
+### GET — Detail
+
+````markdown
+# Get {Resource}
+
+**Endpoint:** `GET /api/{resources}/{id}`
+
+**Description:** One sentence describing what this endpoint returns.
+
+## Path Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | string (GUID) | Yes | The unique identifier of the resource. |
+
+## Response Attributes
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string (GUID) | The unique identifier. |
+| `nested.child` | string | Use dot notation for nested fields. |
+
+## Sample Response
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+}
 ```
 
-## Options
+## Error Response (404)
 
-| Option | Required | Format | Description |
-|---|---|---|---|
-| `-ConfigFile` | No | `-ConfigFile=<path>` | Path to the configuration file. Defaults to `SMARunDNAJob.ini` in the program directory. |
-| `-ApplName` | Either/Or | `-ApplName=<name>` | The APPL name for the DNA job. Either `-ApplName` or `-ApplNumber` is required. |
-
-## Examples
-
-### Basic invocation
-
+```json
+{ actual shape from base controller }
 ```
-SMARunDNAJob.exe -ConfigFile=C:\SMADNA\SMARunDNAJob.ini -ApplName=MYAPP -EffectiveDate=2026/01/15
-```
+````
 
-### With cycle codes
+### POST — JSON Body
 
-```
-SMARunDNAJob.exe -ConfigFile=C:\SMADNA\SMARunDNAJob.ini -ApplName=MYAPP -EffectiveDate=2026/01/15 -C1="EOM" -C2="REG"
-```
+````markdown
+# {Verb} {Resource}
 
-## Exit codes
+**Endpoint:** `POST /api/{resources}/{action}`
 
-| Code | Meaning |
-|---|---|
-| 0 | Job completed successfully. |
-| Non-zero | Job failed. Check the log file for details. |
-```
+**Description:** One sentence describing what this endpoint does.
 
----
+## Request Body
 
-## Configuration File Reference Template
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `fieldName` | string | Yes | What this field represents. Must be a valid GUID. |
+| `nested.child` | string | No | Use dot notation for nested objects. Default: `null`. |
 
-Use this template for INI file and configuration file reference pages.
+> **Required** column: derived from controller validation code, not guessed.
+> **Description** column MUST include constraints: format (GUID, ISO 8601), min/max length, allowed values, defaults.
 
-```markdown
----
-title: <FileName>.ini configuration reference
-description: "Complete reference for all settings in the <FileName>.ini configuration file."
-tags:
-  - Reference
-  - System Administrator
-  - Configuration
----
+## Sample Request
 
-# <FileName>.ini configuration reference
-
-## What is it?
-
-<One paragraph: what this file configures and where it must be placed.>
-
-## File location
-
-Place this file in `<path>`.
-
-## File format
-
-```ini
-[SectionName]
-SettingName=<value>
+```json
+{
+  "fieldName": "realistic value matching constraints above"
+}
 ```
 
-## Settings
+## Response Attributes
 
-### <Section name>
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string (GUID) | The ID of the created resource. |
 
-| Setting | Required | Default | Description |
-|---|---|---|---|
-| `SettingName` | Yes/No | `<default>` | <Description. Use present tense. Note any constraints or allowed values.> |
+## Sample Response (201)
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+}
 ```
+
+## Error Response (400)
+
+```json
+{
+  "errors": {
+    "fieldName": ["Specific validation message from controller code."]
+  }
+}
+```
+
+> Include a realistic 400 response showing at least one field-level validation error derived from the actual controller validation logic.
+````
+
+### POST — Multipart Form
+
+````markdown
+# {Verb} {Resource}
+
+**Endpoint:** `POST /api/{resources}/{action}`
+
+**Description:** One sentence describing what this endpoint does.
+
+## Request Body (`multipart/form-data`)
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `scheduleId` | text | Yes | Schedule GUID. |
+| `importFile` | file | Yes | The file to import. One field per file the endpoint requires. |
+
+> Do NOT manually set the `Content-Type` header — the client must let the HTTP library set `multipart/form-data` with the boundary automatically.
+
+## Sample Request (curl)
+
+```bash
+curl -X POST https://host/api/{resources}/{action} \
+  -H "Authorization: Bearer opcon_token" \
+  -F "scheduleId=a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+  -F "importFile=@/path/to/import.csv"
+```
+
+## Response Attributes
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string (GUID) | The ID of the created resource. |
+
+## Sample Response (201)
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+}
+```
+
+## Error Response (400)
+
+```json
+{
+  "errors": {
+    "fieldName": ["Specific validation message from controller code."]
+  }
+}
+```
+````
+
+## Format Rules
+
+These are non-negotiable. Every endpoint file must comply.
+
+1. **One endpoint per file.** Each `.md` file documents exactly one HTTP method + route combination. Filtered list variants (by status, by scheduleId, etc.) are NOT separate files — they are query parameters within the single `all-{resources}.md` file.
+2. **Top-level heading is `#` (H1).** Section headings are `##` (H2). No H3 or deeper inside endpoint files.
+3. **Section presence is conditional, section ORDER is not.** Sections always appear in the order shown in the template. Omit a section entirely if it doesn't apply.
+4. **Table/JSON parity.** Every field in a Sample Response/Request must have a corresponding row in its Attributes/Body table, and vice versa. The table and the JSON must be a 1:1 match.
+5. **Nesting notation:** `field` for top-level, `parent.child` for nested objects, `items[].field` for array items, `items[].parent.child` for nested fields inside arrays.
+6. **Type column values:** `string`, `integer`, `boolean`, `number`, `string (GUID)`, `string (ISO 8601)`, `array[string]`, `array[object]`, `object`. Be specific — prefer `string (GUID)` over `string` when the value is a GUID.
+7. **Realistic sample data.** Use names, dates, and IDs plausible for a US financial institution workload automation environment. No "foo", "bar", "test", or "example.com". Use **First Bank of Valkyrie** as the sample bank name and **firstbankofvalkyrie.com** as the sample email domain.
+8. **No cross-references between files.** Each file is self-contained.
+9. **camelCase JSON keys** matching `[JsonProperty]` attributes in DTOs.
+10. **No commentary, design notes, or explanatory prose.** These are strict reference documents.
+
+## Sidebar Registration
+
+After creating an endpoint file, register it in the Docusaurus sidebar configuration (`sidebars.js`) in **both** navigation locations:
+
+1. Under `API` > `API Reference` > `{Resource Group}`
+2. Under `Reference` > `API Reference` > `{Resource Group}`
+
+If the resource group doesn't exist yet, create it in both locations. Group name = plural resource noun (e.g., "Jobs", "Schedules", "Agents"). Place the new group alphabetically among existing groups.
+
+Sidebar entry format: reference the doc by its ID, `api/reference/{filename}` (no `.md` extension).
+
+## Requirements
+
+1. Read EVERY controller and DTO. Use actual field names from `[JsonProperty]` attributes for JSON keys.
+2. Document EVERY endpoint. One file per endpoint. No endpoint may be skipped.
+3. Every file MUST use the template for its HTTP method exactly. No freeform paragraphs.
+4. Response Attributes tables MUST document every field in the Sample Response using dot/bracket notation for nesting.
+5. Sample Responses MUST be complete, realistic JSON — not truncated, not placeholder.
+6. Request Body tables MUST mark Required yes/no by reading the controller validation code. Add validation constraints to the Description column.
+7. Start with the API collection or Swagger/OpenAPI spec to enumerate endpoints, then read source code for every detail.
