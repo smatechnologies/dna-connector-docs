@@ -1,205 +1,216 @@
-# OpCon Golden Examples
+# Golden Examples
 
-Reference these examples when writing, reviewing, or editing documentation pages. Each example shows the correct pattern for its page type.
+Complete, fully-compliant reference examples for each documentation type.
+Use these to calibrate output quality. Every element in these examples —
+front matter, structure, tone, formatting, and cross-references — follows
+the standards in opcon-documentation-standards.md and is appropriate for the
+target audience per opcon-learner-roles.md.
+
+> **How to use this file:** When writing or reviewing a page, find the
+> golden example that matches the documentation type and audience
+> complexity. Use it as a quality benchmark — the finished page should
+> be structurally and stylistically comparable.
 
 ---
 
-## Conceptual Page — Gold Standard
+## Conceptual Example
+
+Target audience: Automation Engineer (moderate-to-high technical background)
 
 ```markdown
 ---
-title: Fiserv DNA Connector
-description: "An overview of the Fiserv DNA Connector for OpCon, explaining its components and how they work together to automate DNA job processing."
+title: How job dependencies work
+description: "Understand how job dependencies control execution order within and across schedules so jobs run in the correct sequence."
 tags:
   - Conceptual
-  - All
-  - DNA Connector
+  - Automation Engineer
+  - Jobs
+  - Schedules
 ---
+# How job dependencies work
 
-# Fiserv DNA Connector
+Job dependencies control the order in which jobs run. When a job has a
+dependency configured, it will not start until the job it depends on
+has reached the required status. Dependencies let you build reliable
+processing sequences without relying on fixed start times.
 
-## What is it?
+## Why dependencies matter
 
-The Fiserv DNA Connector extends OpCon to schedule and automate jobs on the Fiserv DNA core banking platform. Financial institutions use Fiserv DNA for core processing — attracting and retaining accountholders, reducing expenses, and boosting ROI. The connector bridges OpCon's scheduling engine with DNA's job processing capabilities.
+Timed starts are fragile — if an upstream job runs long or fails, a
+downstream job that starts on a fixed schedule may process incomplete
+or missing data. Dependencies let the downstream job wait for the
+correct signal instead of a clock, making the automation resilient to
+variable run times.
 
-The connector consists of three components:
+## Dependency types
 
-- **Fiserv DNA job sub-type** — a job type in OpCon that allows you to define and configure DNA jobs within the OpCon interface.
-- **SMARunDNAJob program** — a command-line program that starts and monitors a DNA job on the Fiserv DNA platform.
-- **Convert DNA Template program** — a utility that imports existing Fiserv DNA templates (workflows) into OpCon as schedules and jobs.
+OpCon supports three dependency types, each designed for a different
+relationship between jobs:
 
-## How it works
+| Type | When to use | What it does |
+|---|---|---|
+| Requires | The downstream job needs the upstream job to succeed | Holds the downstream job until the upstream job finishes with the required exit code |
+| After | The downstream job should run after the upstream job regardless of outcome | Releases the downstream job once the upstream job reaches a finished status, whether it succeeded or failed |
+| Excludes | The downstream job should not run if the upstream job reaches a certain status | Removes the downstream job from the schedule if the upstream job matches the specified condition |
 
-When OpCon runs a DNA job, it calls `SMARunDNAJob.exe` with the job's parameters. SMARunDNAJob connects to the Oracle database backing Fiserv DNA, submits the job to the DNA processing queue, and monitors its status until completion. If the job completes without errors, SMARunDNAJob exits with code 0 and OpCon marks the job finished.
+## How dependencies resolve
 
-The DNA Query Processor (`SMADNAQueryProcessor.exe`) handles the communication layer between OpCon's Request Router and the Fiserv DNA Oracle database, allowing the OpCon interface to query DNA job definitions in real time.
+OpCon evaluates each job's dependencies at every check interval. When
+all dependencies for a job are satisfied, the job is released to run.
+If a dependency is not met by the time the schedule closes, the job
+remains in a **Waiting** status and is reported as unresolved for
+that day.
 
-## Key concepts
+## Cross-schedule dependencies
 
-- **APPL**: A Fiserv DNA application (job). Each APPL has an APPL name and APPL number.
-- **Cycle code**: A processing cycle identifier passed to a DNA job at run time (for example, `EOM` for end-of-month processing).
-- **Effective date**: The date passed to a DNA job for processing, in `YYYY/MM/DD` format.
-- **SQT**: A Fiserv DNA script or template type that defines how a DNA job runs.
+Dependencies can span schedules. A job in one schedule can require a
+job in a different schedule to complete before it starts. When
+configuring a cross-schedule dependency, specify both the schedule
+name and the job name. OpCon resolves the dependency regardless of
+which schedule builds first.
 
-## FAQs
+**Related topics:**
 
-**Q: Do I need to install all three components?**
-
-A: Yes. All three components are required for full functionality. The job sub-type handles job definition in the OpCon interface; SMARunDNAJob handles job execution; and SMAConvertDNATemplate is required if you want to import existing DNA templates rather than creating jobs manually.
-
-## Glossary
-
-| Term | Definition |
-|---|---|
-| APPL | A Fiserv DNA application (job), identified by an APPL name and APPL number. |
-| Cycle code | A Fiserv DNA processing cycle identifier passed to a job at run time. |
-| DDI | Data Definition Interface — the OpCon service that imports XML schedule definitions. |
-| Effective date | The processing date for a DNA job, in YYYY/MM/DD format. |
-| SQRWT | SQL Report Writer — the Fiserv DNA program that runs DNA jobs. |
+- [Add a dependency to a job](add-job-dependency.md)
+- [How frequencies work](how-frequencies-work.md)
+- [Respond to a job in Waiting status](respond-waiting-job.md)
 ```
 
 ---
 
-## Procedural Page — Gold Standard
+## Procedural Example
+
+Target audience: Automation Engineer (technical, task-focused)
 
 ```markdown
 ---
-title: Configure the Oracle connection
-description: "How to create and configure the SMAOracleConnection.ini file so that SMARunDNAJob can connect to the Fiserv DNA Oracle database."
+title: Add a frequency to a job
+description: "Add a frequency to a job to define when OpCon will build and submit the job for execution."
 tags:
   - Procedural
-  - System Administrator
-  - Configuration
+  - Automation Engineer
+  - Frequencies
+  - Jobs
 ---
+# Add a frequency to a job
 
-# Configure the Oracle connection
+Add a frequency to a job to specify when OpCon should build and run
+it. A job without a frequency will not be built into the daily
+schedule.
 
-## What is it?
-
-SMARunDNAJob connects to the Fiserv DNA Oracle database using a dedicated connection file (`SMAOracleConnection.ini`). This procedure walks you through creating and populating that file with the correct connection details.
-
-## Prerequisites
-
-- The Fiserv DNA Connector files are installed in `C:\ProgramData\OpConxps\DNA\`.
-- You have the Oracle database host name, port, and service name from your Fiserv DNA administrator.
-- You have the Oracle user name and password that SMARunDNAJob will use. Encrypt these values using the **Password Encryption Tool** in Enterprise Manager before entering them.
-
-## Configure the Oracle connection
-
-To configure the Oracle connection for SMARunDNAJob, complete the following steps:
-
-1. Open `C:\ProgramData\OpConxps\DNA\`.
-2. Create a new file named `SMAOracleConnection.ini`.
-3. Enter the following content in the file:
-   ```
-   [General]
-   UserName=
-   Password=
-
-   [Oracle Connection]
-   HostName=
-   Port=
-   ServiceName=
-   ```
-4. In the **General** section, enter the encrypted Oracle user name and password.
-5. In the **Oracle Connection** section, enter the host name, port, and service name for the Fiserv DNA Oracle database.
-6. Save the file.
-
-:::tip Example
-
-A completed `SMAOracleConnection.ini` file:
-```
-[General]
-UserName=5cc26c261b056b30513f2a2a8bd9322eee9d98c80be73810
-Password=5cc26c261b056b30513f2a2a8bd9322eee9d98c80be73810
-
-[Oracle Connection]
-HostName=dnacreator
-Port=1521
-ServiceName=neondna4
-```
+:::note[Prerequisite]
+The job must exist in the Job Master before a frequency can be
+added. See [Add a job to a schedule](add-job.md).
 :::
 
-## FAQs
+To add a frequency, complete the following steps:
 
-**Q: How do I find the service name for my Oracle database?**
+1. Go to the **Administration** menu and select **Job Master**.
+2. In the **Schedule** list, select the schedule.
+3. Select the job. The Job Master Details page is displayed.
+4. Select the **Frequency** tab.
+5. Select the **Add** button. The **Add Frequency** window is displayed.
+6. In the **Frequency Name** field, select an existing frequency from
+   the list or enter a name to create a new one.
+7. Configure the frequency options.
+8. Select the **Save** button. The frequency is added to the job.
 
-A: Run the following SQL query against the Fiserv DNA Oracle database:
-```sql
-SELECT * FROM v$parameter WHERE name LIKE '%service_name%';
-```
-The result shows the service name configured for the Oracle instance.
+:::tip
+Select the **Forecast** button to preview which dates the
+frequency will generate before saving. This is especially useful
+when holiday calendar offsets are involved.
+:::
+
+**Related topics:**
+
+- [How frequencies work](how-frequencies-work.md)
+- [Configure a holiday calendar](configure-holiday-calendar.md)
+- [Add a dependency to a job](add-job-dependency.md)
 ```
 
 ---
 
-## Reference Page — Gold Standard
+## Procedural Pattern: Inline Note with Table
+
+When a step requires the user to choose between options and there is relevant context to share before they choose, place the note inside the step before the table. Indent both the note and the table at 4 spaces to keep them attached to the step in Docusaurus.
+
+```markdown
+2. Select the build option you need:
+
+    :::note
+    Both options create the job immediately. Choose based on whether
+    you want to reuse an existing job's configuration.
+    :::
+
+    | Option | Use when |
+    |---|---|
+    | **Copy a Job** | You want to reuse an existing job's frequencies, dependencies, and events |
+    | **Create a New Job** | You want to configure all settings manually |
+
+3. Select the **Save** button. The job is added to the Job Master.
+```
+
+---
+
+## Reference Example
+
+Target audience: Compliance Team and Operations Staff (scanning for specific information)
 
 ```markdown
 ---
-title: SMARunDNAJob configuration settings
-description: "Complete reference for all settings in the SMARunDNAJob.ini configuration file, organized by section."
+title: Standard reports
+description: "Pre-configured reports available in OpCon, organized by category with format options and descriptions."
 tags:
   - Reference
-  - System Administrator
-  - Configuration
+  - Compliance Team
+  - Operations Staff
+  - Reports
 ---
+# Standard reports
 
-# SMARunDNAJob configuration settings
+The Standard Reports section provides pre-configured reports related
+to jobs, schedules, agents, and system activity. Reports are available
+in PDF and/or Excel formats.
 
-## What is it?
+## Job reports
 
-`SMARunDNAJob.ini` is the primary configuration file for the SMARunDNAJob program. It controls how SMARunDNAJob connects to Oracle, monitors jobs, handles output files, and logs activity. Create this file in `C:\ProgramData\OpConxps\DNA\` before running DNA jobs.
-
-Settings marked with **†** can be overridden by a matching command-line argument.
-
-## General
-
-| Setting | Required | Description |
+| Report | Description | Formats |
 |---|---|---|
-| `DaysOfLogFilesToKeep` | No | Number of days to retain log files. Log files older than this value are purged automatically. |
-| `Program2Execute` | Yes | Full path to the `sqrwt.exe` or `sqrt.exe` program. |
-| `SQTArgumentTemplate` | No | Template for building the SQRWT argument string. Use property tokens (for example, `[[SCHEDDATE]]`) for dynamic values. |
-| `EnvFile` **†** | No | Full path to the environment file that sets up the execution environment for SQRWT. |
-| `ErrorWordsFile` **†** | No | Full path to the error words file (`SMAErrorWordsFile.txt`). See [SMAErrorWordsFile](./sma-error-words-file.md). |
+| Job Execution History | All job runs within a selected date range, including start time, end time, duration, exit code, and agent. | PDF, Excel |
+| Failed Jobs | All jobs that ended in a failed status within the selected period, with exit codes and job details. | PDF, Excel |
+| Job Execution List | A detailed list of all job executions for a specified schedule and date range. | Excel |
+
+## Schedule reports
+
+| Report | Description | Formats |
+|---|---|---|
+| Schedule Build Summary | A record of all schedule builds for a selected date range, including build status and job counts. | PDF, Excel |
+| Unbuilt Jobs | All jobs that were not built into the daily schedule for a selected date, with the reason each job was excluded. | PDF, Excel |
+
+## Agent reports
+
+| Report | Description | Formats |
+|---|---|---|
+| Machine Status | Current communication status for all defined agents, including last contact time and machine group membership. | PDF, Excel |
+
+**Related topics:**
+
+- [Generate a report](generate-report.md)
+- [Export report data](export-report.md)
 ```
 
 ---
 
-## Anti-patterns to Avoid
+## Why These Examples Matter for AI Workflows
 
-### Click language
-```
-❌ Click the "Edit Configuration" button.
-✅ Select **Edit Configuration**.
-```
+Golden examples serve as implicit calibration for AI output. When the
+AI has seen a complete, compliant example of each documentation type,
+it can pattern-match against the example rather than assembling output
+purely from rules. This produces higher-quality first drafts because:
 
-### First person
-```
-❌ We recommend encrypting the password.
-✅ Encrypt the password before entering it in the configuration file.
-```
-
-### Future tense for descriptions
-```
-❌ The connector will connect to the Oracle database.
-✅ The connector connects to the Oracle database.
-```
-
-### Missing lead-in sentence for procedures
-```
-❌ 1. Open Services on the OpCon server.
-   2. Stop SMA Service Manager.
-
-✅ To stop the SMA Service Manager, complete the following steps:
-   1. Open Services on the OpCon server.
-   2. Stop **SMA Service Manager**.
-```
-
-### Multiple actions in one step
-```
-❌ 3. Open the SMARequestRouter.ini file in Notepad as an administrator and add the following section at the end.
-
-✅ 3. Open `SMARequestRouter.ini` in a text editor as an administrator.
-   4. Add the following section at the end of the file:
-```
+- Structure is internalized, not just described
+- Tone is demonstrated, not just specified
+- Cross-reference patterns are shown in context
+- Front matter is modeled with realistic tags
+- The relationship between conceptual brevity and procedural precision
+  is visible in the contrast between examples

@@ -1,203 +1,188 @@
-# OpCon Primary Analysis — Page Completeness Scoring
+# Writer-Friendly Documentation Standard
 
-Use this 13-section template to score any documentation page for completeness and standards compliance. Score each section 0–2:
-- **2** = Fully met
-- **1** = Partially met or minor issues
-- **0** = Missing or major issues
-
-Maximum score: **26 points**. Pages below 20 require revision before publishing.
+> **Purpose:** This file defines the primary page template used to evaluate documentation completeness and structure. Every feature page submitted for review is scored against these 13 sections (0–12).
+>
+> **Used by:** `doc-quality-assessor` — Template Adherence Review (Step 3) and Completeness subscore.
 
 ---
 
-## Section 1: Front Matter Completeness (0–2)
+## Template Overview
 
-**Checks:**
-- [ ] `title:` field present and matches H1
-- [ ] `description:` present, one sentence, describes page purpose and audience value
-- [ ] `tags:` present with at least three tags: Type (Conceptual/Procedural/Reference) + Role + Feature area
-- [ ] No extraneous front matter fields
+Every feature page must include all 13 sections below, in order. Each section has a defined intent — use it to judge whether the content present actually fulfills the section's purpose, not just whether a heading exists.
 
-**Score: ___/2**
-
----
-
-## Section 2: Page Type Clarity (0–2)
-
-**Checks:**
-- [ ] Page has a single, clear type (Conceptual, Procedural, or Reference)
-- [ ] Content matches the declared type (no mixed Conceptual+Procedural on the same page)
-- [ ] Heading structure matches the template for the declared type
-
-**Score: ___/2**
-
----
-
-## Section 3: "What is it?" Section (0–2)
-
-**Checks:**
-- [ ] Section exists (H2 `## What is it?`)
-- [ ] Answers: What does this do? Why does it exist? What problem does it solve?
-- [ ] 1–3 paragraphs; no bullet lists
-- [ ] Does not restate the page title verbatim
-
-**Score: ___/2**
+| # | Section Title | One-Line Intent |
+|---|---|---|
+| 0 | Theme and Audience | Declares page type and target reader at the top |
+| 1 | What Is It? (Overview) | 2–4 sentence intro for a first-time reader |
+| 2 | When Would You Use It? (Use Cases) | Bullet list of key scenarios |
+| 3 | Why Would You Use It? (Value) | Benefits in plain language |
+| 4 | How To Implement It | Prerequisites, numbered steps, one example |
+| 5 | Configuration Options | Table: Setting \| What It Does \| Default \| Notes |
+| 6 | Exception Handling | Error → Meaning → Fix |
+| 7 | Administration | Enable/disable, roles, maintenance |
+| 8 | Security Considerations | Auth, authorization, data security, sensitive data |
+| 9 | Operations (Running in Production) | Monitoring, alerts, performance/scaling |
+| 10 | FAQs | Most predictable user questions |
+| 11 | Examples / Recipes | Real-world scenarios |
+| 12 | Glossary | Short definitions of key terms |
 
 ---
 
-## Section 4: Voice and Person (0–2)
+## Section Definitions
 
-**Checks:**
-- [ ] Second person ("you") used throughout
-- [ ] No first person ("we," "our," "I")
-- [ ] No "users" or "the user" — rewritten as "you"
-- [ ] Imperative mood for instructions; present tense for descriptions
+### Section 0 — Theme and Audience
 
-**Score: ___/2**
+At the top of the page, clearly state:
 
----
+- **Theme:** one of *Build*, *Configure*, *Troubleshoot*, or *Overview*
+- **Who Is It For?** — the intended audience, selected from:
+  - *System Administrator*
+  - *Automation Engineer*
+  - *Application Owner*
+  - *Operations Staff*
+  - *Business Analyst*
+  - *Compliance Team*
 
-## Section 5: Terminology Compliance (0–2)
-
-**Checks:**
-- [ ] No banned terms (click, navigate to, launch, checkbox, drop-down, LSAM, execute, task/process as job)
-- [ ] Customer-facing terms used (Agent not LSAM; job not task/process)
-- [ ] DNA-specific terms used correctly (APPL uppercase, cycle code lowercase, etc.)
-- [ ] Product names capitalized correctly (OpCon, Fiserv DNA, Solution Manager)
-
-**Score: ___/2**
+**Evaluation pass criteria:** Both fields are present, populated with a valid value from the allowed lists, and placed at the top of the page before any body content.
 
 ---
 
-## Section 6: UI Element Formatting (0–2)
+### Section 1 — What Is It? (Overview)
 
-**Checks:**
-- [ ] Button and menu labels in **bold**
-- [ ] File paths, parameter names, and values in `code`
-- [ ] Field names in **bold**
-- [ ] Key names in **bold**
-- [ ] No quoted "button names" without bold
+2–4 sentences explaining the feature for a first-time reader. Should answer: what does this feature do, and what problem does it solve?
 
-**Score: ___/2**
+**Evaluation pass criteria:** 2–4 sentences present. No bullet lists. Written for someone with no prior exposure to the feature.
 
 ---
 
-## Section 7: Procedure Structure (0–2)
+### Section 2 — When Would You Use It? (Use Cases)
 
-**Applies to Procedural pages only. Score 2/2 if page is not Procedural.**
+A bullet list of key scenarios in which a user would reach for this feature. Each bullet should describe a real situation, not a capability.
 
-**Checks:**
-- [ ] Lead-in sentence present: "To [goal], complete the following steps:"
-- [ ] Steps are numbered
-- [ ] One action per step
-- [ ] Steps use imperative mood
-- [ ] No procedures buried in conceptual paragraphs
-
-**Score: ___/2**
+**Evaluation pass criteria:** At least 2 bullets present. Phrased as scenarios ("When you need to…", "If your organization…"), not capabilities ("This feature supports…").
 
 ---
 
-## Section 8: Reference Structure (0–2)
+### Section 3 — Why Would You Use It? (Value)
 
-**Applies to Reference pages only. Score 2/2 if page is not Reference.**
+Benefits written in plain language. Focus on outcomes: easier, faster, safer, more automated, reduced risk, etc. Avoid marketing language.
 
-**Checks:**
-- [ ] Settings/options presented in a table with columns: Setting, Required, Description (+ Default if applicable)
-- [ ] Descriptions use present tense
-- [ ] Required/optional clearly marked
-- [ ] Examples provided for complex settings
-
-**Score: ___/2**
+**Evaluation pass criteria:** At least 2 distinct benefits stated. Written from the reader's perspective. Does not simply restate the feature's capabilities.
 
 ---
 
-## Section 9: Admonitions (0–2)
+### Section 4 — How To Implement It
 
-**Checks:**
-- [ ] Admonitions used only when necessary (not decorative)
-- [ ] Correct type used (NOTE for clarification, TIP for examples, WARNING for risk)
-- [ ] Maximum two admonitions per page
-- [ ] Admonition titles properly formatted (`:::info NOTE`, `:::tip Example`, `:::warning`)
+Three required parts:
 
-**Score: ___/2**
+1. **Prerequisites** — what must be true or in place before starting
+2. **Numbered steps** — one action per step, in order
+3. **One short example or screenshot** — a concrete illustration of the completed setup or a key step
 
----
-
-## Section 10: Factual Accuracy (0–2)
-
-**Checks:**
-- [ ] File paths match known installation defaults
-- [ ] Setting names match actual configuration file keys
-- [ ] Command-line options match actual program behavior
-- [ ] No fabricated information, placeholder text, or "TBD" content
-
-**Score: ___/2**
+**Evaluation pass criteria:** All three parts present. Steps are numbered. At least one example or screenshot placeholder/description present.
 
 ---
 
-## Section 11: Completeness (0–2)
+### Section 5 — Configuration Options
 
-**Checks:**
-- [ ] All major scenarios covered for the page's scope
-- [ ] No obvious gaps (e.g., Installation page missing a step)
-- [ ] Prerequisites stated if non-obvious
-- [ ] Examples provided for complex configurations
+A table with four columns:
 
-**Score: ___/2**
+| Setting | What It Does | Default | Notes |
+|---|---|---|---|
 
----
+Each configurable setting for the feature should appear as one row.
 
-## Section 12: FAQs Section (0–2)
-
-**Applies to pages covering complex features. Score 2/2 if page does not warrant FAQs.**
-
-**Checks:**
-- [ ] Section present if page covers a feature that commonly raises questions
-- [ ] Questions are in natural language (not restating the heading)
-- [ ] Answers are concise and actionable
-- [ ] Q&A format used (`**Q: ...**` / `A: ...`)
-
-**Score: ___/2**
+**Evaluation pass criteria:** Table present with all four columns. At least one row populated. No placeholders left blank without a stated reason.
 
 ---
 
-## Section 13: Glossary Section (0–2)
+### Section 6 — Exception Handling
 
-**Applies to pages introducing new domain terms. Score 2/2 if page introduces no new terms.**
+A list of common problems and solutions. Each entry follows this pattern:
 
-**Checks:**
-- [ ] Section present if page introduces domain-specific terms not defined elsewhere in the docs
-- [ ] Table format: Term | Definition
-- [ ] Definitions use present tense and complete sentences
-- [ ] No circular definitions
+> **Error or symptom** → What it means → How to fix it
 
-**Score: ___/2**
+**Evaluation pass criteria:** At least 2 error/symptom entries present. Each entry includes the error, its meaning, and a fix. Not a generic "contact support" placeholder.
 
 ---
 
-## Score Summary
+### Section 7 — Administration
 
-| Section | Score |
+How administrators manage the feature on an ongoing basis. Must cover:
+
+- How to enable or disable the feature
+- Which roles can access or configure it
+- Routine maintenance tasks (if any)
+
+**Evaluation pass criteria:** All three sub-topics addressed. Role names use product terminology (not code names).
+
+---
+
+### Section 8 — Security Considerations
+
+Covers the security surface of the feature:
+
+- Authentication — what credentials or tokens are involved
+- Authorization — who can access or modify this feature
+- Data security — what data is stored, transmitted, or exposed
+- Sensitive data — any PII, credentials, or regulated data handled
+
+**Evaluation pass criteria:** All four sub-topics addressed, even if briefly. Section is not omitted or left as a stub.
+
+---
+
+### Section 9 — Operations (Running in Production)
+
+How the feature behaves and is monitored in a live environment:
+
+- Monitoring — what signals indicate the feature is healthy
+- Alerts — what conditions should trigger notification
+- Performance and scaling — known limits, load considerations, or tuning guidance
+
+**Evaluation pass criteria:** All three sub-topics addressed. Specific metrics, alert conditions, or thresholds stated where applicable.
+
+---
+
+### Section 10 — FAQs
+
+A list of the most predictable questions a user would have after reading the page. Each FAQ is a question-and-answer pair.
+
+**Evaluation pass criteria:** At least 3 Q&A pairs present. Questions reflect real user confusion or edge cases, not rephrased section headings.
+
+---
+
+### Section 11 — Examples / Recipes
+
+Real-world scenarios showing the feature in use end-to-end. Each example should include:
+
+- The scenario or goal
+- The configuration or steps used
+- The expected outcome
+
+**Evaluation pass criteria:** At least 1 complete example present. Must be specific to a plausible real-world situation, not generic.
+
+---
+
+### Section 12 — Glossary
+
+Short definitions of key terms introduced or heavily used on the page. Format:
+
+> **Term** — definition in one or two sentences.
+
+**Evaluation pass criteria:** At least 2 terms defined. Terms are specific to the feature or domain, not general IT vocabulary.
+
+---
+
+## Scoring Guidance
+
+When evaluating a page against this template, apply the following status to each section:
+
+| Status | Meaning |
 |---|---|
-| 1. Front matter completeness | /2 |
-| 2. Page type clarity | /2 |
-| 3. "What is it?" section | /2 |
-| 4. Voice and person | /2 |
-| 5. Terminology compliance | /2 |
-| 6. UI element formatting | /2 |
-| 7. Procedure structure | /2 |
-| 8. Reference structure | /2 |
-| 9. Admonitions | /2 |
-| 10. Factual accuracy | /2 |
-| 11. Completeness | /2 |
-| 12. FAQs section | /2 |
-| 13. Glossary section | /2 |
-| **Total** | **/26** |
+| ✅ Present and complete | Section exists and fulfills its stated intent |
+| ⚠️ Present but incomplete | Section exists but is missing one or more required elements |
+| ❌ Missing | Section is absent or reduced to a heading with no content |
 
-## Thresholds
+The **Completeness subscore** (weighted 25%) is derived from the ratio of ✅ sections to total sections. Partial credit applies for ⚠️ sections at the reviewer's discretion.
 
-| Score | Action |
-|---|---|
-| 24–26 | Publish-ready |
-| 20–23 | Minor revisions needed before publishing |
-| 14–19 | Significant revisions needed |
-| 0–13 | Major rewrite required |
+The **Structure / Template Adherence subscore** (weighted 15%) evaluates whether sections appear in order, use the correct format (table, numbered list, etc.), and meet the structural requirements stated above — not just whether content is present.
