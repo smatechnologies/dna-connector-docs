@@ -16,14 +16,14 @@ The Fiserv DNA Connector files provide the core components required for OpCon to
 
 ## Prerequisites
 
-- The `SMAConnector.zip` file is available on the OpCon server.
+- The `SMADNAConnector.zip` file is available on the OpCon server.
 - You have write access to the OpCon installation directory (`C:\ProgramData\OpConxps\` or the equivalent path on your server).
 
 ## Install the connector files
 
 To install the Fiserv DNA Connector files, complete the following steps:
 
-1. Extract the files from `SMAConnector.zip`.
+1. Extract the files from `SMADNAConnector.zip`.
 2. Place the extracted folder and its contents in the `OpConxps` directory on the OpCon server:
    - If OpCon is installed on the C drive, place the files in `C:\ProgramData\OpConxps\`. This creates a new `DNA` subdirectory.
    - If OpCon is installed on a different drive, place the files in the `OpConxps` directory that contains the `SAM\Log` folder.

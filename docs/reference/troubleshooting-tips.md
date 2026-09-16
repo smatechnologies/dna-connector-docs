@@ -29,7 +29,7 @@ To unblock the connector files, complete the following steps:
 
 **Issue: The Fiserv DNA sub-type does not appear in the job sub-type list in Enterprise Manager.**
 
-Contact SMA Support and request that they run the following SQL script against the OpCon database to add the Fiserv DNA sub-type record:
+Contact Continuous Support and request that they run the following SQL script against the OpCon database to add the Fiserv DNA sub-type record:
 
 ```sql
 DECLARE @exists INT;
@@ -73,9 +73,9 @@ If a new Oracle connection file is needed, create `SMAOracleConnection.ini` with
 UserName=<encrypted username>
 Password=<encrypted password>
 [Oracle Connection]
-HostName=dnacreator
+HostName=<oracle host name>
 Port=1521
-ServiceName=neondna4
+ServiceName=<oracle service name>
 ```
 
 ## SMARunDNAJob

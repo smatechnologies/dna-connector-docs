@@ -37,7 +37,10 @@ To open the configuration screen, select **Edit Configuration**. The configurati
 | **Database** | The Oracle service name or database name. |
 
 :::info NOTE
-Set the password in `SMAConvertDNATemplate.ini`. Remove the password from the file as soon as the conversion is complete.
+Set the password in `SMAConvertDNATemplate.ini`. Two forms are accepted:
+
+- **The name of an encrypted password file** created with SMACreatePasswordFile. Preferred — the credential is never written into the configuration file.
+- **The password itself**, in plain text. If you use this form, remove the password from the file as soon as the conversion is complete.
 :::
 
 ### Schedule Defaults tab
@@ -74,7 +77,7 @@ Use the **Schedule Defaults** tab to specify default values for OpCon schedules 
 | **Build Status** | Default status for the job when added to a schedule. |
 | **User ID** | The OpCon user identity under which `SMARunDNAJob.exe` runs. |
 | **Priority** | Job priority. |
-| **Command** | Command-line template for the DNA job. Recommended setting: `"[[PathSMADNA]]\SMARunDNAJob.exe" -ConfigFile=[[PathSMADNA]]\SMARunDNAJob.ini` |
+| **Command** | Command-line template for the DNA job. Recommended setting: `"[[PathSMADNA]]\SMARunDNAJob.exe" -ConfigFile=[[PathSMADNAConfig]]\SMARunDNAJob.ini`. Both global properties are described under [Install the Fiserv DNA job sub-type](./installation/fiserv-dna-subtype.md). |
 | **Working Directory** | Working directory for the job. Using a Global Property is recommended. |
 | **Fail Condition** | Condition used to evaluate job failure. |
 | **Fail Value** | Value for the fail condition. |

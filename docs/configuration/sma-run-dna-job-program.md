@@ -12,7 +12,9 @@ tags:
 
 ## What is it?
 
-`SMARunDNAJob.ini` is the primary configuration file for the SMARunDNAJob program. It controls how SMARunDNAJob connects to Oracle, monitors jobs, handles output files, and logs activity. Create this file in `C:\ProgramData\OpConxps\DNA\` before running DNA jobs.
+`SMARunDNAJob.ini` is the primary configuration file for the SMARunDNAJob program. It controls how SMARunDNAJob connects to Oracle, monitors jobs, handles output files, and logs activity.
+
+Create this file in the directory where `SMARunDNAJob.exe` is installed. That is where the program looks for it by default — it reads a file named after itself, beside itself. To keep the file elsewhere, pass its full path with the `-ConfigFile` command-line argument, which is what the job sub-type does.
 
 Settings marked with **†** can be overridden by a matching command-line argument. See [Command-line options](../reference/command-line.md).
 
@@ -20,7 +22,7 @@ Settings marked with **†** can be overridden by a matching command-line argume
 
 To create the SMARunDNAJob configuration file, complete the following steps:
 
-1. Go to `C:\ProgramData\OpConxps\DNA\` (or the directory where `SMARunDNAJob.exe` is installed).
+1. Go to the directory where `SMARunDNAJob.exe` is installed.
 2. Create a new file named `SMARunDNAJob.ini`.
 3. Enter the following template and populate the values for your environment:
 

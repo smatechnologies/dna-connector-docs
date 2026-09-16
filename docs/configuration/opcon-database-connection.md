@@ -45,7 +45,7 @@ To update the SMA Request Router INI file, complete the following steps:
 
 3. Go to `<media>:\ProgramData\OpConxps\SAM\`.
 4. Open `SMARequestRouter.ini` in a text editor as an administrator.
-5. Add the following section at the end of the file:
+5. Add the following section at the end of the file, replacing `NN` in the section heading with the next unused request handler number in that file. Existing sections are numbered sequentially — if the file already contains `[RequestHandler01]` and `[RequestHandler02]`, use `[RequestHandler03]`.
    ```
    [RequestHandlerNN]
    RequestHandler=
@@ -60,7 +60,7 @@ To update the SMA Request Router INI file, complete the following steps:
 | `RequestHandler` | The name of the request handler. Enter `DNAQUERYPROCESSOR`. |
 | `RequestExecutable` | The full path to `SMADNAQueryProcessor.exe`. |
 | `RequestExecutionPath` | The DNA installation directory (the working directory for the request handler). |
-| `RequestArguments` | Arguments for the request handler executable's command line. |
+| `RequestArguments` | Command-line arguments for the request handler executable. Leave blank unless your installation requires specific arguments — the DNA Query Processor reads its settings from `SMADNAQueryProcessor.ini` rather than from the command line. |
 
 7. Return to **Services** and start the **SMA Service Manager** service.
 

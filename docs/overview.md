@@ -12,13 +12,15 @@ tags:
 
 ## What is it?
 
-The Fiserv DNA Connector extends OpCon to schedule and automate jobs on the Fiserv DNA core banking platform. Financial institutions use Fiserv DNA for core processing — attracting and retaining accountholders, reducing expenses, and improving return on investment. The connector bridges OpCon's scheduling engine with DNA's job processing capabilities.
+The Fiserv DNA Connector extends OpCon to schedule and automate jobs on the Fiserv DNA core banking platform. The connector bridges OpCon's scheduling engine with DNA's job processing capabilities.
 
-The connector consists of three components:
+The connector consists of four required components and one optional utility:
 
+- **Connector files** — The core files placed on the OpCon server that the other components rely on.
 - **Fiserv DNA job sub-type** — A job type in OpCon that allows you to define and configure DNA jobs within the OpCon interface.
 - **SMARunDNAJob program** — A command-line program that starts and monitors a DNA job on the Fiserv DNA platform.
-- **Convert DNA Template program** — A utility that imports existing Fiserv DNA templates (workflows) into OpCon as schedules and jobs.
+- **DNA Query Processor** — Handles queries between OpCon and the Fiserv DNA Oracle database, so the OpCon interface can look up DNA job definitions.
+- **Convert DNA Template program** *(optional)* — A utility that imports existing Fiserv DNA templates (workflows) into OpCon as schedules and jobs. Needed only for an initial migration.
 
 ## How it works
 
@@ -42,9 +44,9 @@ A Fiserv DNA implementation generally includes existing templates (workflows) co
 
 ## FAQs
 
-**Q: Do I need to install all three components?**
+**Q: Which components do I need to install?**
 
-A: Yes. All three components are required for full functionality. The job sub-type handles job definition in the OpCon interface; SMARunDNAJob handles job execution on the DNA platform; and SMAConvertDNATemplate is required if you want to import existing DNA templates rather than creating jobs manually.
+A: Four are required: the connector files, the job sub-type, SMARunDNAJob, and the DNA Query Processor. The job sub-type handles job definition in the OpCon interface, SMARunDNAJob runs jobs on the DNA platform, and the Query Processor lets the interface look up DNA job definitions. SMAConvertDNATemplate is optional — install it only if you want to import existing DNA templates rather than creating jobs manually.
 
 **Q: What database does the DNA Connector require?**
 

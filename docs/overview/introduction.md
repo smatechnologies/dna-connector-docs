@@ -12,7 +12,7 @@ tags:
 
 ## What is it?
 
-The Fiserv DNA Connector extends OpCon to schedule and automate jobs on the Fiserv DNA core banking platform. It consists of three components, each serving a distinct role in the integration between OpCon and Fiserv DNA.
+The Fiserv DNA Connector extends OpCon to schedule and automate jobs on the Fiserv DNA core banking platform. It consists of four required components and one optional utility, each serving a distinct role in the integration between OpCon and Fiserv DNA. The three described below are the ones you configure directly; the connector files and the DNA Query Processor are covered under [Installation](../installation/overview.md) and [Configuration](../configuration/overview.md).
 
 ## Components
 
