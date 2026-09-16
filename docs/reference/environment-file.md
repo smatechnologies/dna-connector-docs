@@ -46,29 +46,29 @@ If `networknodenbr` is not set in any location, SMARunDNAJob uses the most recen
 
 ```
 ALLUSERSPROFILE=C:\ProgramData
-APPDATA=C:\Users\servacct\AppData\Roaming
+APPDATA=C:\Users\dnaservice\AppData\Roaming
 BACKUP=C:\BACKUP
 BATFILES=C:\BATFILES
 CommonProgramFiles=C:\Program Files\Common Files
 CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
 CommonProgramW6432=C:\Program Files\Common Files
-COMPUTERNAME=DNACREATOR
+COMPUTERNAME=DNASERVER
 ComSpec=C:\Windows\system32\cmd.exe
 datapump=c:\datapump
 DBAUTILS=C:\DBAUTILS
-DBNAME=neondna4
+DBNAME=DNADB
 EXPORTS=C:\EXPORTS
 HOMEDRIVE=C:
-HOMEPATH=\Users\servacct
-LOCALAPPDATA=C:\Users\servacct\AppData\Local
+HOMEPATH=\Users\dnaservice
+LOCALAPPDATA=C:\Users\dnaservice\AppData\Local
 NUMBER_OF_PROCESSORS=4
-OPATCH=c:\app\oracle\product\12.1.0.2\db_1\OPatch
+OPATCH=c:\app\oracle\product\<oracle_version>\db_1\OPatch
 ORACLE_BASE=c:\app\oracle
-ORACLE_BIN=c:\app\oracle\product\12.1.0.2\db_1\bin
-ORACLE_HOME=c:\app\oracle\product\12.1.0.2\db_1
-ORACLE_SID=neondna4
+ORACLE_BIN=c:\app\oracle\product\<oracle_version>\db_1\bin
+ORACLE_HOME=c:\app\oracle\product\<oracle_version>\db_1
+ORACLE_SID=DNADB
 OS=Windows_NT
-Path=C:\APP\ORACLE\Product\12.1.0.2\db_1\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem
+Path=C:\APP\ORACLE\Product\<oracle_version>\db_1\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem
 PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
 PROCESSOR_ARCHITECTURE=AMD64
 ProgramData=C:\ProgramData
@@ -79,8 +79,8 @@ SystemRoot=C:\Windows
 TEMP=C:\TEMP\1
 TMP=C:\TEMP\1
 TNS_ADMIN=c:\tns_admin
-USERNAME=servacct
-USERPROFILE=C:\Users\servacct
+USERNAME=dnaservice
+USERPROFILE=C:\Users\dnaservice
 windir=C:\Windows
 ```
 

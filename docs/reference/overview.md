@@ -22,3 +22,4 @@ This section contains lookup reference material for the Fiserv DNA Connector. Us
 | [Environment file](./environment-file.md) | Format and example for the environment file used to set up the execution environment for SQRWT. |
 | [Troubleshooting tips](./troubleshooting-tips.md) | Solutions to common issues with the DNA Connector, including sub-type installation and connection configuration problems. |
 | [SMAErrorWordsFile](./sma-error-words-file.md) | Format and example for the error words file used by SMARunDNAJob to evaluate DNA job error tables. |
+| [Convert DNA Template](../convert-dna-template.md) | Configuration tabs and conversion procedure for the Convert DNA Template program. |

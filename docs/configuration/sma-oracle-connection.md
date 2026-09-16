@@ -67,13 +67,13 @@ SELECT * FROM v$parameter WHERE name LIKE '%service_name%';
 A completed `SMAOracleConnection.ini` file:
 ```
 [General]
-UserName=5cc26c261b056b30513f2a2a8bd9322eee9d98c80be73810ee9d98c80be73810
-Password=5cc26c261b056b30513f2a2a8bd9322eee9d98c80be73810ee9d98c80be73810
+UserName=<encrypted user name>
+Password=<encrypted password>
 
 [Oracle Connection]
-HostName=dnacreator
+HostName=<oracle host name>
 Port=1521
-ServiceName=neondna4
+ServiceName=<oracle service name>
 ```
 :::
 
