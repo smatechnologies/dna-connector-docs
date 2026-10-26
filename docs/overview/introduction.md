@@ -24,7 +24,7 @@ See [Fiserv DNA job sub-type](./fiserv-dna-subtype.md) for details.
 
 ### SMARunDNAJob program
 
-SMARunDNAJob is the command-line program that starts and monitors Fiserv DNA jobs. When OpCon runs a DNA job, it calls `SMARunDNAJob.exe` with the job's parameters. SMARunDNAJob connects to the Fiserv DNA Oracle database, submits the job to the processing queue, and monitors it until completion. An enhanced monitoring option tracks the active Oracle session to detect lost or failed jobs in real time.
+SMARunDNAJob is the command-line program that starts and monitors Fiserv DNA jobs. When OpCon runs a DNA job, it calls `SMARunDNAJob.exe` with the job's parameters. SMARunDNAJob connects to the Fiserv DNA Oracle database, creates the queue rows for the job itself, and then runs SQRWT to carry the job out, monitoring the Oracle session until SQRWT exits. Session monitoring always runs and detects a lost or failed job while it is still running.
 
 See [SMARunDNAJob program](./sma-run-dna-job-program.md) for details.
 
