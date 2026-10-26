@@ -36,7 +36,7 @@ oracleconnfile=
 
 | Setting | Required | Description |
 |---|---|---|
-| `opcondatfile` | Yes | The full path to `SMAODBCConfiguration.dat`. |
+| `opcondatfile` | No | The full path to `SMAODBCConfiguration.dat`. SMADNAQueryProcessor does not read this key (CON-2514). Keep it in the file for compatibility with earlier releases, but changing it has no effect. |
 | `oracleconnfile` | Yes | The full path to `SMAOracleConnection.ini`. |
 
 :::tip Example

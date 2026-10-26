@@ -52,7 +52,15 @@ ServiceName=
 |---|---|---|
 | `HostName` | Yes | The host name of the server running the Fiserv DNA Oracle database. |
 | `Port` | Yes | The port used to connect to the Oracle database. |
-| `ServiceName` | Yes | The Oracle service name for the Fiserv DNA database. |
+| `ServiceName` | Yes | The Oracle service name for the Fiserv DNA database. Used by SMADNAQueryProcessor, which is what the **Job DNA Query** tab in Enterprise Manager queries. SMARunDNAJob reads this value and then replaces it with `SQTDatabase` from `SMARunDNAJob.ini`, so it has no effect on the database that jobs run against. |
+
+:::caution
+
+Because SMARunDNAJob uses `SQTDatabase` and SMADNAQueryProcessor uses `ServiceName`, the
+two can point at different databases. Set both to the same service unless you intend the
+**Job DNA Query** tab to look up APPLs somewhere other than where the jobs run.
+
+:::
 
 :::info NOTE
 If the Oracle service name is not known, run the following SQL query against the Fiserv DNA Oracle database to find it:

@@ -12,17 +12,31 @@ tags:
 
 ## What is it?
 
-SMARunDNAJob is a command-line program that starts and monitors jobs on the Fiserv DNA platform. When OpCon runs a DNA job, it calls `SMARunDNAJob.exe` with the job's parameters. SMARunDNAJob submits the job to the Fiserv DNA processing queue and monitors its status until completion.
+SMARunDNAJob is a command-line program that starts and monitors jobs on the Fiserv DNA platform. When OpCon runs a DNA job, it calls `SMARunDNAJob.exe` with the job's parameters.
 
-An enhanced monitoring option provides visibility into the job's status as it runs by tracking the active Oracle session associated with the DNA process.
+SMARunDNAJob does not hand the job to Fiserv DNA and wait for DNA to report back. It creates the queue rows itself and then runs SQRWT to carry the job out, tracking the Oracle session that SQRWT opens. See [How it works](#how-it-works).
 
-SMARunDNAJob exits with one of the following codes:
+Session monitoring always runs. It gives visibility into the job while it runs by tracking the active Oracle session associated with the DNA process.
+
+SMARunDNAJob sets the following exit codes itself:
 
 | Exit code | Meaning |
 |---|---|
 | `0` | Job completed successfully. |
 | `1` | Job failed. Check the log file for details. |
 | `5001` | File-load job completed with `TBL` (partial load) status rather than full `LOAD` status. |
+
+These are not the only codes the program can return. When SQRWT runs, SMARunDNAJob adopts
+SQRWT's own exit code as its own, and the additional error check program's exit code is
+returned the same way. A value of `-532462766` has also been seen. Treat any code other
+than `0` and `5001` as a failure, and read the log file to find out what failed.
+
+:::caution
+
+Do not test for `1` as the only failure code in an OpCon job's Failure Criteria. A DNA job
+that fails inside SQRWT exits with SQRWT's code, which is not `1`.
+
+:::
 
 ## File-load jobs
 
@@ -43,7 +57,21 @@ SMARunDNAJob requires the following to run DNA jobs:
 - Oracle client software
 - SQRWT (SQL Report Writer) — the Fiserv DNA program that runs jobs
 
-SMARunDNAJob reads its settings from `SMARunDNAJob.ini` and connects to the Fiserv DNA Oracle database using the Oracle connection file (`SMAOracleConnection.ini`). It then passes the job parameters to SQRWT and monitors the Oracle session until the job completes or times out.
+SMARunDNAJob reads its settings from `SMARunDNAJob.ini` and connects to the Fiserv DNA Oracle database using the Oracle connection file (`SMAOracleConnection.ini`). It then carries out the following steps:
+
+1. Looks up the APPL and builds the job's parameters and cycle codes.
+2. Creates the queue rows for the job in the Fiserv DNA database: a `QUEAPPL` row, a `QUE` row with status `RQST`, a `QUEAPPLPARAM` row for each parameter, a `QUEAPPLACCTCYCLE` row for each cycle code, and a `QUEAPPLHIST` row.
+3. Writes the SQT response file.
+4. Runs the program named by `Program2Execute` (`sqrwt.exe`) as a child process and waits for it to exit, checking the Oracle session every 10 seconds while it runs.
+5. Sets `COMPLETEDATETIME` on the `QUE` row and `STOPDATETIME` on the `QUEAPPLHIST` row, then evaluates the error rows in `QUEAPPLERROR`.
+
+:::info Note
+
+SMARunDNAJob never reads the status of the `QUE` row it created. The outcome of the job is
+determined by SQRWT's exit code, the Oracle session monitoring, and the error rows in
+`QUEAPPLERROR` — not by the queue status in Fiserv DNA.
+
+:::
 
 For full configuration details, see [SMARunDNAJob program configuration](../configuration/sma-run-dna-job-program.md).
 
@@ -51,7 +79,18 @@ For full configuration details, see [SMARunDNAJob program configuration](../conf
 
 **Q: What is enhanced monitoring?**
 
-A: Enhanced monitoring tracks the active Oracle session associated with the running DNA job. SMARunDNAJob polls the Oracle `V$SESSION` or `GV$SESSION` table at regular intervals. If the session disappears before the job completes, SMARunDNAJob reports the job as failed. Enable enhanced monitoring by setting the `LostSessionTimeoutSeconds` and `MachineName` parameters in `SMARunDNAJob.ini`.
+A: Session monitoring tracks the active Oracle session associated with the running DNA job. SMARunDNAJob queries the Oracle `V$SESSION` or `GV$SESSION` table every 10 seconds while SQRWT runs. If the session cannot be found or is not active for longer than `LostSessionTimeoutSeconds`, SMARunDNAJob reports the job as failed.
+
+Monitoring is not optional and cannot be turned off. `LostSessionTimeoutSeconds` is a required setting: if it is missing or empty, the program reports an error and exits. Setting it to `0` turns off the lost-session failure only — the session is still queried every 10 seconds.
+
+:::caution
+
+Set `LostSessionTimeoutSeconds` to `0` or to `10` or higher. Because the countdown advances
+every second but the session is only checked every 10 seconds, a value from `1` to `9`
+expires before the first check can clear it, and every job fails with
+`ERROR: Session appears to have been lost`.
+
+:::
 
 **Q: When should I use `GV$SESSION` instead of `V$SESSION`?**
 

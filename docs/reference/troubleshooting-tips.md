@@ -59,7 +59,7 @@ You may also need to open Enterprise Manager as an administrator the first time 
 
 **Issue: The DNA Query Processor cannot connect to OpCon or Oracle.**
 
-Verify that `SMADNAQueryProcessor.ini` has the correct paths for both `opcondatfile` and `oracleconnfile`. The paths must be absolute and the files must exist at those locations.
+Verify that `SMADNAQueryProcessor.ini` has the correct path for `oracleconnfile`. The path must be absolute and the file must exist at that location. The `opcondatfile` key is not read by SMADNAQueryProcessor (CON-2514), so an incorrect value there is not the cause.
 
 Example of a correct configuration:
 ```
@@ -90,7 +90,7 @@ Verify the following:
 
 1. Confirm `Program2Execute` in `SMARunDNAJob.ini` points to the correct path for `sqrwt.exe` or `sqrt.exe`.
 2. Confirm the APPL name or APPL number specified on the command line exists in the Fiserv DNA database.
-3. Check the SMARunDNAJob log file (in the same directory as `SMARunDNAJob.exe`, named after the APPL) for the specific error message.
+3. Check the SMARunDNAJob log file (in the `Log` subfolder of the program's working directory, named after the APPL) for the specific error message.
 4. Confirm ODAC is installed and the ODAC version matches the Oracle client version on the machine.
 
 **Issue: Oracle session monitoring reports the job as lost before the job finishes.**
@@ -107,7 +107,7 @@ To diagnose:
 
 **Q: Where are the SMARunDNAJob log files located?**
 
-A: Log files are written to the directory where `SMARunDNAJob.exe` is installed, using the APPL name as the base file name. The `DaysOfLogFilesToKeep` setting in `SMARunDNAJob.ini` controls how long log files are retained.
+A: Log files are written to a `Log` subfolder of the program's working directory, which is normally the directory where `SMARunDNAJob.exe` is installed. SMARunDNAJob creates the subfolder if it does not exist. Each file is named `<ApplName> <yyyyMMdd_HHmmss>-<process id>.log`, so a single APPL produces one file per run rather than one file overall. The `DaysOfLogFilesToKeep` setting in `SMARunDNAJob.ini` controls how long log files are retained.
 
 **Q: How do I determine what caused a DNA job to fail?**
 

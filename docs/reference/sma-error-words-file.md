@@ -25,7 +25,20 @@ The file has two sections:
 | `[Error Masks]` | Regular expressions. A row in `QUEAPPLERROR` matching any of these expressions causes the job to fail, regardless of the `MSQUERRThreshold` setting. |
 | `[Ignore Masks]` | Regular expressions. A row matching any of these expressions is discarded immediately and does not count toward the error threshold or trigger error mask evaluation. |
 
-Each line in a section is a separate regular expression. Separate multiple expressions on the same line with a vertical pipe (`|`). Each line must end with a vertical pipe.
+Each line in a section is a separate regular expression.
+
+The two sections are not parsed the same way:
+
+* In `[Error Masks]`, a line is split on the vertical pipe (`|`), so one line can hold several expressions.
+* In `[Ignore Masks]`, the whole line is treated as a single expression and is not split.
+
+:::caution
+
+Do not end a line with a vertical pipe. In `[Error Masks]` a trailing pipe adds an empty
+expression, and in `[Ignore Masks]` a trailing pipe makes the expression match every row,
+so every error is ignored and the job never fails on error content (CON-2507).
+
+:::
 
 ## Example file
 
